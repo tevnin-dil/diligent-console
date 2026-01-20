@@ -203,6 +203,11 @@ function appendMessageToThread(message) {
     
     chatThread.appendChild(messageEl);
     
+    // Initialize form if present
+    if (message.content.includes('appointDirectorForm')) {
+        setTimeout(() => initializeAppointDirectorForm(), 100);
+    }
+    
     // Scroll to bottom
     chatThread.scrollTop = chatThread.scrollHeight;
 }
@@ -366,20 +371,7 @@ function generateResponse(message) {
             </div>
         `;
     } else if (lowerMessage.includes('appoint') && lowerMessage.includes('director')) {
-        return `
-            <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Appointing a Director</h3>
-            <p style="margin-bottom: var(--space-4); line-height: var(--leading-normal); color: var(--color-gray-700);">Here's what you need to appoint a new director:</p>
-            <ol style="padding-left: var(--space-6); line-height: var(--leading-relaxed); color: var(--color-gray-700);">
-                <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Board Resolution:</strong> Draft and approve a board resolution for the appointment</li>
-                <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Consent to Act:</strong> Obtain signed consent from the director candidate</li>
-                <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Conflict of Interest Declaration:</strong> Complete the COI form</li>
-                <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Identity Verification:</strong> Provide government-issued ID and proof of address</li>
-                <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">File with Registry:</strong> Submit forms to the corporate registry within 15 days</li>
-            </ol>
-            <p style="margin-top: var(--space-4); padding: var(--space-3); background: var(--color-gray-100); border-radius: var(--radius-md); color: var(--color-gray-800); border: 1px solid var(--color-gray-200);">
-                💡 I can help you prepare these documents. Would you like to start the process?
-            </p>
-        `;
+        return generateAppointDirectorForm();
     } else if (lowerMessage.includes('open') && lowerMessage.includes('application')) {
         return `
             <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Recent Applications</h3>
@@ -420,6 +412,331 @@ document.querySelectorAll('.action-btn').forEach(btn => {
         }, 150);
     });
 });
+
+// ============================================
+// HYBRID FORM: APPOINT DIRECTOR
+// ============================================
+
+// Mock data for search
+const mockCompanies = [
+    { id: 'c1', name: 'Acme Corporation', jurisdiction: 'Delaware' },
+    { id: 'c2', name: 'Global Industries Ltd', jurisdiction: 'Ontario' },
+    { id: 'c3', name: 'Tech Ventures Inc', jurisdiction: 'California' },
+    { id: 'c4', name: 'Horizon Enterprises', jurisdiction: 'New York' },
+    { id: 'c5', name: 'Summit Holdings', jurisdiction: 'British Columbia' }
+];
+
+const mockDirectors = [
+    { id: 'd1', name: 'John Smith', title: 'Board Chair', company: 'Acme Corporation' },
+    { id: 'd2', name: 'Sarah Johnson', title: 'Director', company: 'Acme Corporation' },
+    { id: 'd3', name: 'Michael Chen', title: 'Independent Director', company: 'Global Industries Ltd' },
+    { id: 'd4', name: 'Emily Rodriguez', title: 'Director', company: 'Tech Ventures Inc' },
+    { id: 'd5', name: 'David Williams', title: 'Board Member', company: 'Horizon Enterprises' }
+];
+
+const mockAppointees = [
+    { id: 'a1', name: 'Jennifer Lee', credentials: 'MBA, CPA', experience: '15 years finance' },
+    { id: 'a2', name: 'Robert Taylor', credentials: 'JD, LLM', experience: '20 years legal' },
+    { id: 'a3', name: 'Amanda Foster', credentials: 'PhD Economics', experience: '10 years academia' },
+    { id: 'a4', name: 'James Park', credentials: 'MBA', experience: '12 years operations' },
+    { id: 'a5', name: 'Maria Garcia', credentials: 'CFA', experience: '18 years investment banking' }
+];
+
+function generateAppointDirectorForm() {
+    return `
+        <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Appoint a Director</h3>
+        <p style="margin-bottom: var(--space-5); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            Let's start by identifying the key parties involved in this appointment.
+        </p>
+        
+        <form id="appointDirectorForm" class="hybrid-form">
+            <!-- Company Search -->
+            <div class="form-field">
+                <label class="form-label">Company</label>
+                <div class="search-field-wrapper">
+                    <input 
+                        type="text" 
+                        id="companySearch" 
+                        class="search-input"
+                        placeholder="Search for company..."
+                        autocomplete="off"
+                    />
+                    <div class="search-results" id="companyResults"></div>
+                    <input type="hidden" id="selectedCompanyId" />
+                </div>
+                <div class="selected-item" id="selectedCompany" style="display: none;"></div>
+            </div>
+
+            <!-- Director to Replace -->
+            <div class="form-field">
+                <label class="form-label">Director to Replace</label>
+                <div class="search-field-wrapper">
+                    <input 
+                        type="text" 
+                        id="directorSearch" 
+                        class="search-input"
+                        placeholder="Search for director..."
+                        autocomplete="off"
+                        disabled
+                    />
+                    <div class="search-results" id="directorResults"></div>
+                    <input type="hidden" id="selectedDirectorId" />
+                </div>
+                <div class="selected-item" id="selectedDirector" style="display: none;"></div>
+            </div>
+
+            <!-- Appointee -->
+            <div class="form-field">
+                <label class="form-label">Appointee (New Director)</label>
+                <div class="search-field-wrapper">
+                    <input 
+                        type="text" 
+                        id="appointeeSearch" 
+                        class="search-input"
+                        placeholder="Search for appointee..."
+                        autocomplete="off"
+                        disabled
+                    />
+                    <div class="search-results" id="appointeeResults"></div>
+                    <input type="hidden" id="selectedAppointeeId" />
+                </div>
+                <div class="selected-item" id="selectedAppointee" style="display: none;"></div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="form-btn-secondary" id="cancelFormBtn">Cancel</button>
+                <button type="submit" class="form-btn-primary" id="submitFormBtn" disabled>Continue</button>
+            </div>
+        </form>
+    `;
+}
+
+function initializeAppointDirectorForm() {
+    const companySearch = document.getElementById('companySearch');
+    const directorSearch = document.getElementById('directorSearch');
+    const appointeeSearch = document.getElementById('appointeeSearch');
+    const form = document.getElementById('appointDirectorForm');
+    const submitBtn = document.getElementById('submitFormBtn');
+    
+    if (!companySearch) return;
+
+    // Company search
+    setupSearchField(
+        companySearch,
+        document.getElementById('companyResults'),
+        mockCompanies,
+        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.jurisdiction}</span>`,
+        (item) => {
+            document.getElementById('selectedCompanyId').value = item.id;
+            showSelectedItem('selectedCompany', item.name, 'companySearch', 'companyResults');
+            // Enable director search
+            directorSearch.disabled = false;
+            directorSearch.focus();
+            checkFormCompletion();
+        }
+    );
+
+    // Director search
+    setupSearchField(
+        directorSearch,
+        document.getElementById('directorResults'),
+        mockDirectors,
+        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.title}</span>`,
+        (item) => {
+            document.getElementById('selectedDirectorId').value = item.id;
+            showSelectedItem('selectedDirector', `${item.name} (${item.title})`, 'directorSearch', 'directorResults');
+            // Enable appointee search
+            appointeeSearch.disabled = false;
+            appointeeSearch.focus();
+            checkFormCompletion();
+        }
+    );
+
+    // Appointee search
+    setupSearchField(
+        appointeeSearch,
+        document.getElementById('appointeeResults'),
+        mockAppointees,
+        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.credentials}</span>`,
+        (item) => {
+            document.getElementById('selectedAppointeeId').value = item.id;
+            showSelectedItem('selectedAppointee', `${item.name} (${item.credentials})`, 'appointeeSearch', 'appointeeResults');
+            checkFormCompletion();
+        }
+    );
+
+    // Form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleAppointDirectorFormSubmit();
+    });
+
+    // Cancel button
+    document.getElementById('cancelFormBtn').addEventListener('click', () => {
+        if (currentChatId) {
+            addMessageToChat(currentChatId, 'assistant', 'No problem. Let me know if you need help with anything else.');
+        }
+    });
+
+    function checkFormCompletion() {
+        const companyId = document.getElementById('selectedCompanyId').value;
+        const directorId = document.getElementById('selectedDirectorId').value;
+        const appointeeId = document.getElementById('selectedAppointeeId').value;
+        
+        submitBtn.disabled = !(companyId && directorId && appointeeId);
+    }
+}
+
+function setupSearchField(input, resultsDiv, data, formatItem, onSelect) {
+    input.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        
+        if (query.length === 0) {
+            resultsDiv.innerHTML = '';
+            resultsDiv.style.display = 'none';
+            return;
+        }
+
+        const filtered = data.filter(item => 
+            item.name.toLowerCase().includes(query)
+        );
+
+        if (filtered.length === 0) {
+            resultsDiv.innerHTML = '<div class="search-result-item no-results">No results found</div>';
+            resultsDiv.style.display = 'block';
+            return;
+        }
+
+        resultsDiv.innerHTML = filtered.map(item => 
+            `<div class="search-result-item" data-id="${item.id}">${formatItem(item)}</div>`
+        ).join('');
+        resultsDiv.style.display = 'block';
+
+        // Add click handlers
+        resultsDiv.querySelectorAll('.search-result-item:not(.no-results)').forEach(el => {
+            el.addEventListener('click', () => {
+                const itemId = el.getAttribute('data-id');
+                const item = data.find(d => d.id === itemId);
+                if (item) {
+                    onSelect(item);
+                }
+            });
+        });
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !resultsDiv.contains(e.target)) {
+            resultsDiv.style.display = 'none';
+        }
+    });
+}
+
+function showSelectedItem(containerId, text, inputId, resultsId) {
+    const container = document.getElementById(containerId);
+    const input = document.getElementById(inputId);
+    const results = document.getElementById(resultsId);
+    
+    container.innerHTML = `
+        <div class="selected-chip">
+            <span>${text}</span>
+            <button type="button" class="remove-chip" onclick="clearSelection('${containerId}', '${inputId}', '${resultsId}')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    `;
+    container.style.display = 'block';
+    input.style.display = 'none';
+    results.style.display = 'none';
+}
+
+function clearSelection(containerId, inputId, resultsId) {
+    const container = document.getElementById(containerId);
+    const input = document.getElementById(inputId);
+    
+    if (!container || !input) return;
+    
+    container.style.display = 'none';
+    input.style.display = 'block';
+    input.value = '';
+    
+    // Clear hidden input (convert selectedCompany -> selectedCompanyId)
+    const hiddenInputId = containerId + 'Id';
+    const hiddenInput = document.getElementById(hiddenInputId);
+    if (hiddenInput) hiddenInput.value = '';
+    
+    // Only focus if not recursively clearing
+    const isRecursive = !event || event.isTrusted === false;
+    if (!isRecursive) {
+        input.focus();
+    }
+    
+    // Disable subsequent fields if clearing early fields
+    const directorSearch = document.getElementById('directorSearch');
+    const appointeeSearch = document.getElementById('appointeeSearch');
+    
+    if (inputId === 'companySearch') {
+        if (directorSearch) directorSearch.disabled = true;
+        if (appointeeSearch) appointeeSearch.disabled = true;
+        clearSelection('selectedDirector', 'directorSearch', 'directorResults');
+        clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+    } else if (inputId === 'directorSearch') {
+        if (appointeeSearch) appointeeSearch.disabled = true;
+        clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+    }
+    
+    // Update form state
+    const submitBtn = document.getElementById('submitFormBtn');
+    if (submitBtn) submitBtn.disabled = true;
+}
+
+function handleAppointDirectorFormSubmit() {
+    const companyId = document.getElementById('selectedCompanyId').value;
+    const directorId = document.getElementById('selectedDirectorId').value;
+    const appointeeId = document.getElementById('selectedAppointeeId').value;
+    
+    const company = mockCompanies.find(c => c.id === companyId);
+    const director = mockDirectors.find(d => d.id === directorId);
+    const appointee = mockAppointees.find(a => a.id === appointeeId);
+    
+    if (!company || !director || !appointee) return;
+    
+    // Create summary message from user
+    const userSummary = `I've selected: ${company.name}, replacing ${director.name} with ${appointee.name}`;
+    
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'user', userSummary);
+        
+        // Simulate AI response with next steps
+        setTimeout(() => {
+            const response = `
+                <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Director Appointment Summary</h3>
+                <div style="background: var(--color-gray-50); border: 1px solid var(--color-gray-200); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Company:</strong> ${company.name} (${company.jurisdiction})</div>
+                    <div style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Outgoing Director:</strong> ${director.name} - ${director.title}</div>
+                    <div><strong style="color: var(--color-gray-900);">Incoming Director:</strong> ${appointee.name} - ${appointee.credentials}</div>
+                </div>
+                
+                <h4 style="margin-bottom: var(--space-2); color: var(--color-gray-900); font-size: var(--text-base);">Next Steps</h4>
+                <ol style="padding-left: var(--space-6); line-height: var(--leading-relaxed); color: var(--color-gray-700);">
+                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Board Resolution:</strong> Draft and approve a board resolution for the appointment</li>
+                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Consent to Act:</strong> Obtain signed consent from ${appointee.name}</li>
+                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Conflict of Interest Declaration:</strong> Complete the COI form</li>
+                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Identity Verification:</strong> Provide government-issued ID and proof of address</li>
+                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">File with Registry:</strong> Submit forms to the corporate registry within 15 days</li>
+                </ol>
+                
+                <p style="margin-top: var(--space-4); padding: var(--space-3); background: var(--color-gray-100); border-radius: var(--radius-md); color: var(--color-gray-800); border: 1px solid var(--color-gray-200);">
+                    💡 Would you like me to generate the required documents for this appointment?
+                </p>
+            `;
+            addMessageToChat(currentChatId, 'assistant', response);
+        }, 600);
+    }
+}
 
 // ============================================
 // LOADING ANIMATION STYLES

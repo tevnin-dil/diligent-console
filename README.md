@@ -38,6 +38,24 @@ When a prompt is submitted, the interface transitions to a three-panel layout:
 - Smooth slide-in animation from the right
 - Can be closed to maximize chat space
 
+#### 3. Hybrid Form Interface
+Special workflows like "Appoint a Director" display an interactive form within the chat:
+
+**Search & Select Fields**
+- **Company Search**: Type-ahead search to select the company
+- **Director Search**: Find the director to be replaced (enabled after company selection)
+- **Appointee Search**: Select the new director appointee (enabled after director selection)
+
+**Progressive Disclosure**
+- Fields unlock sequentially as previous selections are made
+- Selected items display as removable chips
+- Clear any selection to modify and restart from that point
+
+**Form Validation**
+- Submit button disabled until all fields are complete
+- Real-time search with mock company, director, and appointee data
+- Cancel option to exit the workflow
+
 ## Design
 
 - **Design System**: Built on wireframe-kit with CSS custom properties
@@ -66,6 +84,19 @@ Once you submit a prompt, the interface transitions to the chat view:
 4. **New Chat**: Click the + button to start a fresh conversation
 5. **Context Panel**: Click the panel icon in the header to open the right panel
 6. **Return Home**: Click "Home" in the sidebar to return to the hero view
+
+### Hybrid Forms
+Certain workflows present interactive forms within the chat:
+
+**Appoint a Director Workflow:**
+1. Click "Appoint a Director" quick action or ask about appointing a director
+2. Complete the three search fields in sequence:
+   - Search and select the **Company**
+   - Search and select the **Director** to replace
+   - Search and select the **Appointee** (new director)
+3. Review your selections (displayed as removable chips)
+4. Click "Continue" to proceed with the appointment process
+5. AI provides a summary and next steps based on your selections
 
 ### Keyboard Shortcuts
 - **Enter**: Send message
@@ -112,6 +143,14 @@ The app uses CSS custom properties from wireframe-kit:
 - **Responsive**: Adapts to mobile, tablet, and desktop screens
 - **Smooth Transitions**: View changes and panel animations use CSS transitions
 - **Panel System**: Right panel can be toggled independently
+
+### Hybrid Form System
+- **Inline Forms**: Interactive forms embedded directly in the chat thread
+- **Progressive Disclosure**: Fields unlock sequentially based on previous selections
+- **Type-ahead Search**: Real-time filtering as user types
+- **Selection Management**: Removable chip-style selected items
+- **Form Validation**: Submit button only enabled when form is complete
+- **Mock Data**: Includes sample companies, directors, and appointees for demonstration
 
 ## Future Enhancements
 
