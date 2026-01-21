@@ -1117,7 +1117,7 @@ body {
     border: 1px solid var(--color-gray-300);
     border-radius: var(--radius-md);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-height: 240px;
+    max-height: 320px;
     overflow-y: auto;
     z-index: 10;
     display: none;
@@ -1130,6 +1130,7 @@ body {
     transition: background 0.15s ease;
     font-size: var(--text-sm);
     color: var(--color-gray-800);
+    line-height: var(--leading-normal);
 }
 
 .search-result-item:last-child {
@@ -1138,6 +1139,10 @@ body {
 
 .search-result-item:hover {
     background: var(--color-gray-50);
+}
+
+.search-result-item > div {
+    width: 100%;
 }
 
 .search-result-item.no-results {
@@ -1164,6 +1169,13 @@ body {
     font-size: var(--text-sm);
     color: var(--color-gray-900);
     font-weight: 500;
+    max-width: 100%;
+}
+
+.selected-chip > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .remove-chip {

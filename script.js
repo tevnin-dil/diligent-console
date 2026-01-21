@@ -585,28 +585,64 @@ document.querySelectorAll('.action-btn').forEach(btn => {
 
 // Mock data for search
 const mockCompanies = [
-    { id: 'c1', name: 'Acme Corporation', jurisdiction: 'Delaware' },
-    { id: 'c2', name: 'Global Industries Ltd', jurisdiction: 'Ontario' },
-    { id: 'c3', name: 'Tech Ventures Inc', jurisdiction: 'California' },
-    { id: 'c4', name: 'Horizon Enterprises', jurisdiction: 'New York' },
-    { id: 'c5', name: 'Summit Holdings', jurisdiction: 'British Columbia' }
+    { 
+        id: 'c1', 
+        name: 'Acme Feedstock & Monomer, LLC', 
+        location: 'Houston, Texas',
+        country: 'USA',
+        flag: '🇺🇸'
+    },
+    { 
+        id: 'c2', 
+        name: 'VitaPlast Solutions, Ltd.', 
+        location: 'Cork',
+        country: 'Ireland',
+        flag: '🇮🇪'
+    },
+    { 
+        id: 'c3', 
+        name: 'DuraFlow Composites, Inc.', 
+        location: 'Auburn Hills, Michigan',
+        country: 'USA',
+        flag: '🇺🇸'
+    },
+    { 
+        id: 'c4', 
+        name: 'Acme Circular Technologies B.V.', 
+        location: 'Rotterdam',
+        country: 'Netherlands',
+        flag: '🇳🇱'
+    },
+    { 
+        id: 'c5', 
+        name: 'Pacific Polymer Logistics Pte. Ltd.', 
+        location: 'Singapore',
+        country: 'Singapore',
+        flag: '🇸🇬'
+    },
+    { 
+        id: 'c6', 
+        name: 'Acme Advanced Materials Holdings, LLC', 
+        location: 'Wilmington, Delaware',
+        country: 'USA',
+        flag: '🇺🇸'
+    }
 ];
 
-const mockDirectors = [
-    { id: 'd1', name: 'John Smith', title: 'Board Chair', company: 'Acme Corporation' },
-    { id: 'd2', name: 'Sarah Johnson', title: 'Director', company: 'Acme Corporation' },
-    { id: 'd3', name: 'Michael Chen', title: 'Independent Director', company: 'Global Industries Ltd' },
-    { id: 'd4', name: 'Emily Rodriguez', title: 'Director', company: 'Tech Ventures Inc' },
-    { id: 'd5', name: 'David Williams', title: 'Board Member', company: 'Horizon Enterprises' }
+const mockPeople = [
+    { id: 'p1', name: 'Wei "David" Chen', title: 'Vice President, Commercial Operations (APAC)' },
+    { id: 'p2', name: 'Priya Nair', title: 'Regional Finance Director, APAC' },
+    { id: 'p3', name: 'James "Jim" Sterling', title: 'Senior Director, Supply Chain & Logistics' },
+    { id: 'p4', name: 'Elena Rossi', title: 'General Counsel, Asia Pacific' },
+    { id: 'p5', name: 'Lim Pei Shan', title: 'Director of Risk Management & Trade Compliance' },
+    { id: 'p6', name: 'Kenji Tanaka', title: 'Head of Digital Transformation, APAC' },
+    { id: 'p7', name: 'Siti Nurhaliza', title: 'Human Resources Director, APAC' },
+    { id: 'p8', name: 'Michael O\'Connell', title: 'Plant Manager - Jurong Island Compounding Facility' }
 ];
 
-const mockAppointees = [
-    { id: 'a1', name: 'Jennifer Lee', credentials: 'MBA, CPA', experience: '15 years finance' },
-    { id: 'a2', name: 'Robert Taylor', credentials: 'JD, LLM', experience: '20 years legal' },
-    { id: 'a3', name: 'Amanda Foster', credentials: 'PhD Economics', experience: '10 years academia' },
-    { id: 'a4', name: 'James Park', credentials: 'MBA', experience: '12 years operations' },
-    { id: 'a5', name: 'Maria Garcia', credentials: 'CFA', experience: '18 years investment banking' }
-];
+// Use same dataset for both directors and appointees
+const mockDirectors = mockPeople;
+const mockAppointees = mockPeople;
 
 function generateAppointDirectorForm() {
     return `
@@ -691,10 +727,18 @@ function initializeAppointDirectorForm() {
         companySearch,
         document.getElementById('companyResults'),
         mockCompanies,
-        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.jurisdiction}</span>`,
+        (item) => `
+            <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <span style="font-size: var(--text-lg);">${item.flag}</span>
+                <div style="flex: 1;">
+                    <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                    <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.location}, ${item.country}</div>
+                </div>
+            </div>
+        `,
         (item) => {
             document.getElementById('selectedCompanyId').value = item.id;
-            showSelectedItem('selectedCompany', item.name, 'companySearch', 'companyResults');
+            showSelectedItem('selectedCompany', `${item.flag} ${item.name}`, 'companySearch', 'companyResults');
             // Enable director search
             directorSearch.disabled = false;
             directorSearch.focus();
@@ -707,10 +751,15 @@ function initializeAppointDirectorForm() {
         directorSearch,
         document.getElementById('directorResults'),
         mockDirectors,
-        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.title}</span>`,
+        (item) => `
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
+            </div>
+        `,
         (item) => {
             document.getElementById('selectedDirectorId').value = item.id;
-            showSelectedItem('selectedDirector', `${item.name} (${item.title})`, 'directorSearch', 'directorResults');
+            showSelectedItem('selectedDirector', item.name, 'directorSearch', 'directorResults');
             // Enable appointee search
             appointeeSearch.disabled = false;
             appointeeSearch.focus();
@@ -723,10 +772,15 @@ function initializeAppointDirectorForm() {
         appointeeSearch,
         document.getElementById('appointeeResults'),
         mockAppointees,
-        (item) => `${item.name} <span style="color: var(--color-gray-500); font-size: var(--text-xs);">• ${item.credentials}</span>`,
+        (item) => `
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
+            </div>
+        `,
         (item) => {
             document.getElementById('selectedAppointeeId').value = item.id;
-            showSelectedItem('selectedAppointee', `${item.name} (${item.credentials})`, 'appointeeSearch', 'appointeeResults');
+            showSelectedItem('selectedAppointee', item.name, 'appointeeSearch', 'appointeeResults');
             checkFormCompletion();
         }
     );
@@ -763,9 +817,13 @@ function setupSearchField(input, resultsDiv, data, formatItem, onSelect) {
             return;
         }
 
-        const filtered = data.filter(item => 
-            item.name.toLowerCase().includes(query)
-        );
+        const filtered = data.filter(item => {
+            const nameMatch = item.name.toLowerCase().includes(query);
+            const locationMatch = item.location && item.location.toLowerCase().includes(query);
+            const countryMatch = item.country && item.country.toLowerCase().includes(query);
+            const titleMatch = item.title && item.title.toLowerCase().includes(query);
+            return nameMatch || locationMatch || countryMatch || titleMatch;
+        });
 
         if (filtered.length === 0) {
             resultsDiv.innerHTML = '<div class="search-result-item no-results">No results found</div>';
@@ -870,8 +928,11 @@ function handleAppointDirectorFormSubmit() {
     
     if (!company || !director || !appointee) return;
     
+    // Store selection for later use
+    window.selectedAppointment = { company, director, appointee };
+    
     // Create summary message from user
-    const userSummary = `I've selected Pacific Polymer Logistics Pte. Ltd., replacing Wei Chen with Priya Nair`;
+    const userSummary = `I've selected ${company.name}, replacing ${director.name} with ${appointee.name}`;
     
     if (currentChatId) {
         addMessageToChat(currentChatId, 'user', userSummary);
@@ -880,7 +941,7 @@ function handleAppointDirectorFormSubmit() {
         setTimeout(() => {
             const response = `
                 <div>
-                    <p style="margin-bottom: var(--space-3);">Perfect. I'm preparing the appointment workflow for Pacific Polymer Logistics.</p>
+                    <p style="margin-bottom: var(--space-3);">Perfect. I'm preparing the appointment workflow for ${company.name}.</p>
                     <button class="preview-panel-btn" onclick="openAppointmentPanel()">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-1);">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -911,6 +972,12 @@ function openAppointmentPanel() {
 }
 
 function generateAppointmentPanelContent() {
+    const { company, director, appointee } = window.selectedAppointment || {};
+    
+    if (!company || !director || !appointee) {
+        return '<p>Error: Appointment data not found</p>';
+    }
+    
     return `
         <div class="appointment-panel">
             <!-- Summary Section -->
@@ -920,24 +987,24 @@ function generateAppointmentPanelContent() {
                 <div class="summary-card">
                     <div class="summary-item">
                         <label class="summary-label">Company</label>
-                        <div class="summary-value">Pacific Polymer Logistics Pte. Ltd.</div>
-                        <div class="summary-meta">Subsidiary of Acme, Co (USA) • Domiciled in Singapore</div>
+                        <div class="summary-value">${company.flag} ${company.name}</div>
+                        <div class="summary-meta">Domiciled in ${company.location}, ${company.country}</div>
                     </div>
                     
                     <div class="summary-divider"></div>
                     
                     <div class="summary-item">
                         <label class="summary-label">Resigning Director</label>
-                        <div class="summary-value">Wei Chen</div>
-                        <div class="summary-meta">Current Board Member</div>
+                        <div class="summary-value">${director.name}</div>
+                        <div class="summary-meta">${director.title}</div>
                     </div>
                     
                     <div class="summary-divider"></div>
                     
                     <div class="summary-item">
                         <label class="summary-label">Appointee</label>
-                        <div class="summary-value">Priya Nair</div>
-                        <div class="summary-meta">Incoming Director</div>
+                        <div class="summary-value">${appointee.name}</div>
+                        <div class="summary-meta">${appointee.title}</div>
                     </div>
                 </div>
             </section>
@@ -987,7 +1054,7 @@ function generateAppointmentPanelContent() {
                         </div>
                         <div class="document-info">
                             <div class="document-name">Consent to Act as Director</div>
-                            <div class="document-meta">For appointee signature (Singapore)</div>
+                            <div class="document-meta">For ${appointee.name} signature</div>
                         </div>
                         <button class="document-action" onclick="previewDocument('consent-form')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1012,16 +1079,16 @@ function generateAppointmentPanelContent() {
                             </svg>
                         </div>
                         <div class="document-info">
-                            <div class="document-name">ACRA Form 45 - Lodgement</div>
-                            <div class="document-meta">Regulatory filing (ACRA Singapore)</div>
+                            <div class="document-name">Regulatory Filing Form</div>
+                            <div class="document-meta">Government filing for ${company.location}, ${company.country}</div>
                         </div>
-                        <button class="document-action" onclick="previewDocument('acra-form')">
+                        <button class="document-action" onclick="previewDocument('regulatory-form')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg>
                         </button>
-                        <button class="document-action" onclick="downloadDocument('acra-form')">
+                        <button class="document-action" onclick="downloadDocument('regulatory-form')">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="7 10 12 15 17 10"></polyline>
@@ -1055,7 +1122,7 @@ function generateAppointmentPanelContent() {
                         <div class="workflow-step-content">
                             <div class="workflow-step-title">Email Regulatory Forms</div>
                             <div class="workflow-step-description">
-                                Send Consent to Act and ACRA forms to <strong>Priya Nair</strong> for signature. Monitor inbox for signed documents.
+                                Send Consent to Act and regulatory forms to <strong>${appointee.name}</strong> for signature. Monitor inbox for signed documents.
                             </div>
                         </div>
                     </div>
@@ -1065,7 +1132,7 @@ function generateAppointmentPanelContent() {
                         <div class="workflow-step-content">
                             <div class="workflow-step-title">Update Entity Records</div>
                             <div class="workflow-step-description">
-                                Update <strong>Entities</strong> system to reflect Wei Chen's resignation and Priya Nair's appointment to the board.
+                                Update <strong>Entities</strong> system to reflect ${director.name}'s resignation and ${appointee.name}'s appointment to the board.
                             </div>
                         </div>
                     </div>
@@ -1091,7 +1158,7 @@ function previewDocument(docId) {
         const docNames = {
             'board-resolution': 'Board Resolution',
             'consent-form': 'Consent to Act as Director',
-            'acra-form': 'ACRA Form 45 - Lodgement'
+            'regulatory-form': 'Regulatory Filing Form'
         };
         addMessageToChat(currentChatId, 'assistant', 
             `Opening preview of ${docNames[docId]}... (Preview functionality would open document viewer here)`
@@ -1101,10 +1168,14 @@ function previewDocument(docId) {
 
 function downloadDocument(docId) {
     if (currentChatId) {
+        const { company, appointee } = window.selectedAppointment || {};
+        const companyShort = company ? company.name.split(',')[0].replace(/[^a-zA-Z0-9]/g, '_') : 'Company';
+        const appointeeShort = appointee ? appointee.name.replace(/[^a-zA-Z0-9]/g, '_') : 'Appointee';
+        
         const docNames = {
-            'board-resolution': 'Board_Resolution_Pacific_Polymer.pdf',
-            'consent-form': 'Consent_to_Act_Priya_Nair.pdf',
-            'acra-form': 'ACRA_Form_45_Pacific_Polymer.pdf'
+            'board-resolution': `Board_Resolution_${companyShort}.pdf`,
+            'consent-form': `Consent_to_Act_${appointeeShort}.pdf`,
+            'regulatory-form': `Regulatory_Form_${companyShort}.pdf`
         };
         addMessageToChat(currentChatId, 'assistant', 
             `Downloading ${docNames[docId]}... (Download would start here)`
@@ -1133,14 +1204,22 @@ function startAppointmentWorkflow() {
         chat.lastUpdate = new Date();
     }
     
+    // Get selected appointment data
+    const { company, director, appointee } = window.selectedAppointment || {};
+    
+    if (!company || !director || !appointee) {
+        console.error('Appointment data not found');
+        return;
+    }
+    
     // Store appointment context
     currentAppointment = {
-        company: 'Pacific Polymer Logistics Pte. Ltd.',
-        companyMeta: 'Subsidiary of Acme, Co (USA) • Domiciled in Singapore',
-        resigningDirector: 'Wei Chen',
-        resigningDirectorTitle: 'Current Board Member',
-        appointee: 'Priya Nair',
-        appointeeTitle: 'Incoming Director'
+        company: company.name,
+        companyMeta: `Domiciled in ${company.location}, ${company.country}`,
+        resigningDirector: director.name,
+        resigningDirectorTitle: director.title,
+        appointee: appointee.name,
+        appointeeTitle: appointee.title
     };
     
     // Initialize workflow steps with sub-statuses
@@ -1158,10 +1237,10 @@ function startAppointmentWorkflow() {
         {
             id: 'regulatory-forms',
             name: 'Email Regulatory Forms',
-            description: 'Send Consent to Act and ACRA forms to appointee for signature',
+            description: 'Send Consent to Act and regulatory forms to appointee for signature',
             substeps: [
                 { id: 'forms-create', name: 'Generate regulatory forms', status: 'pending', time: null },
-                { id: 'forms-send', name: 'Email forms to Priya Nair', status: 'pending', time: null },
+                { id: 'forms-send', name: `Email forms to ${appointee.name}`, status: 'pending', time: null },
                 { id: 'forms-receive', name: 'Receive signed documents', status: 'pending', time: null },
                 { id: 'forms-validate', name: 'Validate form completeness', status: 'pending', time: null }
             ]
@@ -1171,8 +1250,8 @@ function startAppointmentWorkflow() {
             name: 'Update Entity Records',
             description: 'Update Entities system to reflect board changes',
             substeps: [
-                { id: 'entity-resign', name: 'Record Wei Chen resignation', status: 'pending', time: null },
-                { id: 'entity-appoint', name: 'Record Priya Nair appointment', status: 'pending', time: null }
+                { id: 'entity-resign', name: `Record ${director.name} resignation`, status: 'pending', time: null },
+                { id: 'entity-appoint', name: `Record ${appointee.name} appointment`, status: 'pending', time: null }
             ]
         }
     ];
@@ -1186,7 +1265,7 @@ function startAppointmentWorkflow() {
             `<div class="workflow-initiated">
                 <h4 style="color: var(--color-gray-900); margin-bottom: var(--space-2);">✓ Appointment Workflow Started</h4>
                 <p style="color: var(--color-gray-700); margin-bottom: var(--space-3);">
-                    I'm coordinating the appointment of Priya Nair to Pacific Polymer Logistics Pte. Ltd.
+                    I'm coordinating the appointment of ${appointee.name} to ${company.name}.
                 </p>
                 <p style="color: var(--color-gray-600); font-size: var(--text-sm);">
                     I'll keep you updated as each step completes. You can continue working while I handle this in the background.
