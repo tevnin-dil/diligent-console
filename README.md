@@ -37,6 +37,11 @@ When a prompt is submitted, the interface transitions to a three-panel layout:
 - Toggleable via button in chat header
 - Smooth slide-in animation from the right
 - Can be closed to maximize chat space
+- **Appointment Panel**: Special view for director appointments with:
+  - Summary cards with key information
+  - Document preview and download actions
+  - Automated workflow visualization
+  - Action buttons to start or cancel process
 
 #### 3. Hybrid Form Interface
 Special workflows like "Appoint a Director" display an interactive form within the chat:
@@ -95,8 +100,19 @@ Certain workflows present interactive forms within the chat:
    - Search and select the **Director** to replace
    - Search and select the **Appointee** (new director)
 3. Review your selections (displayed as removable chips)
-4. Click "Continue" to proceed with the appointment process
-5. AI provides a summary and next steps based on your selections
+4. Click "Continue" to open the appointment panel
+5. **Right Panel opens** with:
+   - Complete appointment summary (company, resigning director, appointee)
+   - Preview and download links for required documents:
+     - Board Resolution PDF
+     - Consent to Act as Director (Singapore)
+     - ACRA Form 45 - Lodgement
+   - Automated workflow overview:
+     - Step 1: Create board approval in Boards system
+     - Step 2: Email regulatory forms to appointee
+     - Step 3: Update entity records
+6. Click "Start Process" to initiate the automated workflow
+7. AI concierge coordinates agents to complete all steps
 
 ### Keyboard Shortcuts
 - **Enter**: Send message
@@ -151,6 +167,23 @@ The app uses CSS custom properties from wireframe-kit:
 - **Selection Management**: Removable chip-style selected items
 - **Form Validation**: Submit button only enabled when form is complete
 - **Mock Data**: Includes sample companies, directors, and appointees for demonstration
+
+### Appointment Panel System
+- **Right Panel Integration**: Slides in automatically when form is submitted
+- **Summary View**: Organized sections with key appointment details
+- **Document Management**: 
+  - Preview documents inline (placeholder functionality)
+  - Download documents as PDFs (placeholder functionality)
+  - Document list with icons and metadata
+- **Workflow Visualization**: Step-by-step breakdown of automated agent actions
+- **System Integration Context**:
+  - **Entities System**: Corporate subsidiaries, employees, and boards database
+  - **Boards System**: Board book solutions with document approval functionality
+  - **Email Integration**: Coordinate document signing via email
+- **Agent Coordination**: Concierge agent manages three specialized agents:
+  - Board approval agent (Boards system)
+  - Document signing agent (Email)
+  - Entity update agent (Entities system)
 
 ## Future Enhancements
 

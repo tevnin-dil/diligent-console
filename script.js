@@ -705,36 +705,286 @@ function handleAppointDirectorFormSubmit() {
     if (!company || !director || !appointee) return;
     
     // Create summary message from user
-    const userSummary = `I've selected: ${company.name}, replacing ${director.name} with ${appointee.name}`;
+    const userSummary = `I've selected Pacific Polymer Logistics Pte. Ltd., replacing Wei Chen with Priya Nair`;
     
     if (currentChatId) {
         addMessageToChat(currentChatId, 'user', userSummary);
         
-        // Simulate AI response with next steps
+        // Simulate AI response acknowledging the selection
         setTimeout(() => {
             const response = `
-                <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Director Appointment Summary</h3>
-                <div style="background: var(--color-gray-50); border: 1px solid var(--color-gray-200); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4);">
-                    <div style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Company:</strong> ${company.name} (${company.jurisdiction})</div>
-                    <div style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Outgoing Director:</strong> ${director.name} - ${director.title}</div>
-                    <div><strong style="color: var(--color-gray-900);">Incoming Director:</strong> ${appointee.name} - ${appointee.credentials}</div>
+                <div>
+                    <p style="margin-bottom: var(--space-3);">Perfect. I'm preparing the appointment workflow for Pacific Polymer Logistics.</p>
+                    <button class="preview-panel-btn" onclick="openAppointmentPanel()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-1);">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                        </svg>
+                        Preview Appointment Details
+                    </button>
                 </div>
-                
-                <h4 style="margin-bottom: var(--space-2); color: var(--color-gray-900); font-size: var(--text-base);">Next Steps</h4>
-                <ol style="padding-left: var(--space-6); line-height: var(--leading-relaxed); color: var(--color-gray-700);">
-                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Board Resolution:</strong> Draft and approve a board resolution for the appointment</li>
-                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Consent to Act:</strong> Obtain signed consent from ${appointee.name}</li>
-                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Conflict of Interest Declaration:</strong> Complete the COI form</li>
-                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">Identity Verification:</strong> Provide government-issued ID and proof of address</li>
-                    <li style="margin-bottom: var(--space-2);"><strong style="color: var(--color-gray-900);">File with Registry:</strong> Submit forms to the corporate registry within 15 days</li>
-                </ol>
-                
-                <p style="margin-top: var(--space-4); padding: var(--space-3); background: var(--color-gray-100); border-radius: var(--radius-md); color: var(--color-gray-800); border: 1px solid var(--color-gray-200);">
-                    💡 Would you like me to generate the required documents for this appointment?
-                </p>
             `;
             addMessageToChat(currentChatId, 'assistant', response);
-        }, 600);
+            
+            // Open right panel with appointment details
+            openAppointmentPanel();
+        }, 400);
+    }
+}
+
+function openAppointmentPanel() {
+    // Show the right panel
+    chatView.classList.add('show-right-panel');
+    
+    // Populate the panel content
+    const panelContent = document.querySelector('.right-panel-content');
+    panelContent.innerHTML = generateAppointmentPanelContent();
+    
+    // Initialize panel interactions
+    setTimeout(() => initializeAppointmentPanel(), 100);
+}
+
+function generateAppointmentPanelContent() {
+    return `
+        <div class="appointment-panel">
+            <!-- Summary Section -->
+            <section class="panel-section">
+                <h4 class="panel-section-title">Appointment Summary</h4>
+                
+                <div class="summary-card">
+                    <div class="summary-item">
+                        <label class="summary-label">Company</label>
+                        <div class="summary-value">Pacific Polymer Logistics Pte. Ltd.</div>
+                        <div class="summary-meta">Subsidiary of Acme, Co (USA) • Domiciled in Singapore</div>
+                    </div>
+                    
+                    <div class="summary-divider"></div>
+                    
+                    <div class="summary-item">
+                        <label class="summary-label">Resigning Director</label>
+                        <div class="summary-value">Wei Chen</div>
+                        <div class="summary-meta">Current Board Member</div>
+                    </div>
+                    
+                    <div class="summary-divider"></div>
+                    
+                    <div class="summary-item">
+                        <label class="summary-label">Appointee</label>
+                        <div class="summary-value">Priya Nair</div>
+                        <div class="summary-meta">Incoming Director</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents Section -->
+            <section class="panel-section">
+                <h4 class="panel-section-title">Required Documents</h4>
+                
+                <div class="document-list">
+                    <div class="document-item">
+                        <div class="document-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-name">Board Resolution</div>
+                            <div class="document-meta">For board approval via Boards system</div>
+                        </div>
+                        <button class="document-action" onclick="previewDocument('board-resolution')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button class="document-action" onclick="downloadDocument('board-resolution')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-name">Consent to Act as Director</div>
+                            <div class="document-meta">For appointee signature (Singapore)</div>
+                        </div>
+                        <button class="document-action" onclick="previewDocument('consent-form')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button class="document-action" onclick="downloadDocument('consent-form')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="document-item">
+                        <div class="document-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <div class="document-name">ACRA Form 45 - Lodgement</div>
+                            <div class="document-meta">Regulatory filing (ACRA Singapore)</div>
+                        </div>
+                        <button class="document-action" onclick="previewDocument('acra-form')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                        <button class="document-action" onclick="downloadDocument('acra-form')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workflow Section -->
+            <section class="panel-section">
+                <h4 class="panel-section-title">Automated Workflow</h4>
+                <p class="panel-description">
+                    When you start the process, our concierge agent will coordinate the following steps:
+                </p>
+                
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="workflow-step-number">1</div>
+                        <div class="workflow-step-content">
+                            <div class="workflow-step-title">Create Board Approval</div>
+                            <div class="workflow-step-description">
+                                Submit Board Resolution to the <strong>Boards</strong> system for asynchronous approval by board members.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="workflow-step-number">2</div>
+                        <div class="workflow-step-content">
+                            <div class="workflow-step-title">Email Regulatory Forms</div>
+                            <div class="workflow-step-description">
+                                Send Consent to Act and ACRA forms to <strong>Priya Nair</strong> for signature. Monitor inbox for signed documents.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="workflow-step-number">3</div>
+                        <div class="workflow-step-content">
+                            <div class="workflow-step-title">Update Entity Records</div>
+                            <div class="workflow-step-description">
+                                Update <strong>Entities</strong> system to reflect Wei Chen's resignation and Priya Nair's appointment to the board.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Section -->
+            <section class="panel-section panel-actions">
+                <button class="panel-btn-secondary" onclick="closeAppointmentPanel()">Cancel</button>
+                <button class="panel-btn-primary" onclick="startAppointmentWorkflow()">Start Process</button>
+            </section>
+        </div>
+    `;
+}
+
+function initializeAppointmentPanel() {
+    // Panel is already interactive via onclick handlers
+    // Could add additional initialization here if needed
+}
+
+function previewDocument(docId) {
+    if (currentChatId) {
+        const docNames = {
+            'board-resolution': 'Board Resolution',
+            'consent-form': 'Consent to Act as Director',
+            'acra-form': 'ACRA Form 45 - Lodgement'
+        };
+        addMessageToChat(currentChatId, 'assistant', 
+            `Opening preview of ${docNames[docId]}... (Preview functionality would open document viewer here)`
+        );
+    }
+}
+
+function downloadDocument(docId) {
+    if (currentChatId) {
+        const docNames = {
+            'board-resolution': 'Board_Resolution_Pacific_Polymer.pdf',
+            'consent-form': 'Consent_to_Act_Priya_Nair.pdf',
+            'acra-form': 'ACRA_Form_45_Pacific_Polymer.pdf'
+        };
+        addMessageToChat(currentChatId, 'assistant', 
+            `Downloading ${docNames[docId]}... (Download would start here)`
+        );
+    }
+}
+
+function closeAppointmentPanel() {
+    chatView.classList.remove('show-right-panel');
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'assistant', 
+            'Appointment process cancelled. Let me know if you need anything else.'
+        );
+    }
+}
+
+function startAppointmentWorkflow() {
+    // Close the panel
+    chatView.classList.remove('show-right-panel');
+    
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'assistant', 
+            `<div class="workflow-initiated">
+                <h4 style="color: var(--color-gray-900); margin-bottom: var(--space-2);">✓ Appointment Workflow Started</h4>
+                <p style="color: var(--color-gray-700); margin-bottom: var(--space-3);">
+                    I'm coordinating the appointment of Priya Nair to Pacific Polymer Logistics Pte. Ltd.
+                </p>
+                <div style="background: var(--color-gray-50); border: 1px solid var(--color-gray-200); border-radius: var(--radius-md); padding: var(--space-3);">
+                    <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2);">
+                        <div class="status-indicator status-active"></div>
+                        <strong style="color: var(--color-gray-900);">Step 1:</strong> Creating board approval in Boards system...
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2);">
+                        <div class="status-indicator status-pending"></div>
+                        <strong style="color: var(--color-gray-900);">Step 2:</strong> Waiting to email forms to Priya Nair
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <div class="status-indicator status-pending"></div>
+                        <strong style="color: var(--color-gray-900);">Step 3:</strong> Waiting to update entity records
+                    </div>
+                </div>
+                <p style="color: var(--color-gray-600); font-size: var(--text-sm); margin-top: var(--space-3);">
+                    I'll keep you updated as each step completes. You can continue working while I handle this in the background.
+                </p>
+            </div>`
+        );
     }
 }
 
