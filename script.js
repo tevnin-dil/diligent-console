@@ -335,6 +335,9 @@ function appendMessageToThread(message) {
     if (message.content.includes('appointDirectorForm')) {
         setTimeout(() => initializeAppointDirectorForm(), 100);
     }
+    if (message.content.includes('addPersonForm')) {
+        setTimeout(() => initializeAddPersonForm(), 100);
+    }
     
     // Scroll to bottom
     chatThread.scrollTop = chatThread.scrollHeight;
@@ -537,7 +540,21 @@ function generateResponse(message) {
             </div>
         `;
     } else if (lowerMessage.includes('appoint') && lowerMessage.includes('director')) {
-        return generateAppointDirectorForm();
+        // Check if user is specifying replace or add
+        if (lowerMessage.includes('replace')) {
+            return generateAppointDirectorForm('replace');
+        } else if (lowerMessage.includes('add')) {
+            return generateAppointDirectorForm('add');
+        } else {
+            return generateAppointmentTypeSelection();
+        }
+    } else if ((lowerMessage.includes('replace') || lowerMessage.includes('add')) && (lowerMessage.includes('director') || lowerMessage.includes('board'))) {
+        // Handle direct "replace a director" or "add a director" messages
+        if (lowerMessage.includes('replace')) {
+            return generateAppointDirectorForm('replace');
+        } else if (lowerMessage.includes('add')) {
+            return generateAppointDirectorForm('add');
+        }
     } else if (lowerMessage.includes('open') && lowerMessage.includes('application')) {
         return `
             <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Recent Applications</h3>
@@ -644,14 +661,197 @@ const mockPeople = [
 const mockDirectors = mockPeople;
 const mockAppointees = mockPeople;
 
-function generateAppointDirectorForm() {
+function generateAppointmentTypeSelection() {
     return `
         <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Appoint a Director</h3>
+        <p style="margin-bottom: var(--space-5); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            Are you replacing an existing director or adding a new director to the board?
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-4);">
+            <button 
+                class="appointment-type-btn" 
+                onclick="selectAppointmentType('replace')"
+                style="padding: var(--space-4); background: var(--color-white); border: 2px solid var(--color-gray-300); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s ease; text-align: left;"
+                onmouseover="this.style.background='var(--color-gray-50)'; this.style.borderColor='var(--color-gray-400)';"
+                onmouseout="this.style.background='var(--color-white)'; this.style.borderColor='var(--color-gray-300)';"
+            >
+                <div style="font-weight: 600; font-size: var(--text-base); color: var(--color-gray-900); margin-bottom: var(--space-1);">
+                    Replace an Existing Director
+                </div>
+                <div style="font-size: var(--text-sm); color: var(--color-gray-600);">
+                    Appoint a new director to replace someone who is resigning or being removed
+                </div>
+            </button>
+            
+            <button 
+                class="appointment-type-btn" 
+                onclick="selectAppointmentType('add')"
+                style="padding: var(--space-4); background: var(--color-white); border: 2px solid var(--color-gray-300); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s ease; text-align: left;"
+                onmouseover="this.style.background='var(--color-gray-50)'; this.style.borderColor='var(--color-gray-400)';"
+                onmouseout="this.style.background='var(--color-white)'; this.style.borderColor='var(--color-gray-300)';"
+            >
+                <div style="font-weight: 600; font-size: var(--text-base); color: var(--color-gray-900); margin-bottom: var(--space-1);">
+                    Add a New Director
+                </div>
+                <div style="font-size: var(--text-sm); color: var(--color-gray-600);">
+                    Expand the board by appointing an additional director
+                </div>
+            </button>
+        </div>
+        
+        <div style="padding: var(--space-3); background: var(--color-gray-50); border-radius: var(--radius-md); border: 1px solid var(--color-gray-200);">
+            <p style="font-size: var(--text-xs); color: var(--color-gray-600); line-height: var(--leading-normal);">
+                💡 You can also type "replace a director" or "add a director" to make your selection.
+            </p>
+        </div>
+    `;
+}
+
+function selectAppointmentType(type) {
+    if (!currentChatId) return;
+    
+    const typeText = type === 'replace' ? 'Replace an existing director' : 'Add a new director';
+    
+    // Add user's selection as a message
+    addMessageToChat(currentChatId, 'user', typeText);
+    
+    // Show the appropriate form
+    setTimeout(() => {
+        const response = generateAppointDirectorForm(type);
+        addMessageToChat(currentChatId, 'assistant', response);
+    }, 400);
+}
+
+function showAddPersonForm(appointmentType) {
+    if (!currentChatId) return;
+    
+    // Store current form state before switching to add person form
+    const companyId = document.getElementById('selectedCompanyId')?.value || '';
+    const directorId = document.getElementById('selectedDirectorId')?.value || '';
+    
+    window.tempAppointmentFormState = {
+        appointmentType: appointmentType,
+        companyId: companyId,
+        directorId: directorId
+    };
+    
+    // Add user message
+    addMessageToChat(currentChatId, 'user', 'I need to add a new appointee');
+    
+    // Show add person form
+    setTimeout(() => {
+        const response = generateAddPersonForm();
+        addMessageToChat(currentChatId, 'assistant', response);
+    }, 400);
+}
+
+function generateAddPersonForm() {
+    return `
+        <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Add New Person to Entities</h3>
+        <p style="margin-bottom: var(--space-5); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            This person will be added to the Entities system and available for future appointments.
+        </p>
+        
+        <form id="addPersonForm" class="hybrid-form">
+            <!-- First Name -->
+            <div class="form-field">
+                <label class="form-label">First Name <span style="color: #dc2626;">*</span></label>
+                <input 
+                    type="text" 
+                    id="personFirstName" 
+                    class="search-input"
+                    placeholder="Enter first name..."
+                    autocomplete="off"
+                    required
+                />
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-field">
+                <label class="form-label">Last Name <span style="color: #dc2626;">*</span></label>
+                <input 
+                    type="text" 
+                    id="personLastName" 
+                    class="search-input"
+                    placeholder="Enter last name..."
+                    autocomplete="off"
+                    required
+                />
+            </div>
+
+            <!-- Title -->
+            <div class="form-field">
+                <label class="form-label">Title <span style="color: #dc2626;">*</span></label>
+                <input 
+                    type="text" 
+                    id="personTitle" 
+                    class="search-input"
+                    placeholder="e.g., Chief Financial Officer"
+                    autocomplete="off"
+                    required
+                />
+            </div>
+
+            <!-- Company -->
+            <div class="form-field">
+                <label class="form-label">Company <span style="color: #dc2626;">*</span></label>
+                <div class="search-field-wrapper">
+                    <input 
+                        type="text" 
+                        id="personCompanySearch" 
+                        class="search-input"
+                        placeholder="Search for company..."
+                        autocomplete="off"
+                    />
+                    <div class="search-results" id="personCompanyResults"></div>
+                    <input type="hidden" id="selectedPersonCompanyId" />
+                </div>
+                <div class="selected-item" id="selectedPersonCompany" style="display: none;"></div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-field">
+                <label class="form-label">Email <span style="color: #dc2626;">*</span></label>
+                <input 
+                    type="email" 
+                    id="personEmail" 
+                    class="search-input"
+                    placeholder="email@example.com"
+                    autocomplete="off"
+                    required
+                />
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="form-btn-secondary" id="cancelAddPersonBtn">Cancel</button>
+                <button type="submit" class="form-btn-primary" id="submitAddPersonBtn" disabled>Add Person</button>
+            </div>
+        </form>
+    `;
+}
+
+function generateAppointDirectorForm(appointmentType = 'replace', savedState = {}, newlyAddedPerson = null) {
+    const isReplacement = appointmentType === 'replace';
+    
+    // Get pre-selected data
+    const preSelectedCompany = savedState.companyId ? mockCompanies.find(c => c.id === savedState.companyId) : null;
+    const preSelectedDirector = savedState.directorId ? mockDirectors.find(d => d.id === savedState.directorId) : null;
+    const preSelectedAppointee = newlyAddedPerson;
+    
+    // Determine which fields should be enabled
+    const directorEnabled = isReplacement && preSelectedCompany;
+    const appointeeEnabled = (!isReplacement && preSelectedCompany) || (isReplacement && preSelectedDirector);
+    
+    return `
+        <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">
+            ${isReplacement ? 'Replace a Director' : 'Add a New Director'}
+        </h3>
         <p style="margin-bottom: var(--space-5); line-height: var(--leading-normal); color: var(--color-gray-700);">
             Let's start by identifying the key parties involved in this appointment.
         </p>
         
-        <form id="appointDirectorForm" class="hybrid-form">
+        <form id="appointDirectorForm" class="hybrid-form" data-appointment-type="${appointmentType}" data-saved-company="${savedState.companyId || ''}" data-saved-director="${savedState.directorId || ''}" data-newly-added="${newlyAddedPerson ? newlyAddedPerson.id : ''}">
             <!-- Company Search -->
             <div class="form-field">
                 <label class="form-label">Company</label>
@@ -662,13 +862,27 @@ function generateAppointDirectorForm() {
                         class="search-input"
                         placeholder="Search for company..."
                         autocomplete="off"
+                        style="${preSelectedCompany ? 'display: none;' : ''}"
                     />
                     <div class="search-results" id="companyResults"></div>
-                    <input type="hidden" id="selectedCompanyId" />
+                    <input type="hidden" id="selectedCompanyId" value="${preSelectedCompany ? preSelectedCompany.id : ''}" />
                 </div>
-                <div class="selected-item" id="selectedCompany" style="display: none;"></div>
+                <div class="selected-item" id="selectedCompany" style="display: ${preSelectedCompany ? 'block' : 'none'};">
+                    ${preSelectedCompany ? `
+                        <div class="selected-chip">
+                            <span>${preSelectedCompany.flag} ${preSelectedCompany.name}</span>
+                            <button type="button" class="remove-chip" onclick="clearSelection('selectedCompany', 'companySearch', 'companyResults')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
 
+            ${isReplacement ? `
             <!-- Director to Replace -->
             <div class="form-field">
                 <label class="form-label">Director to Replace</label>
@@ -679,13 +893,27 @@ function generateAppointDirectorForm() {
                         class="search-input"
                         placeholder="Search for director..."
                         autocomplete="off"
-                        disabled
+                        ${!directorEnabled ? 'disabled' : ''}
+                        style="${preSelectedDirector ? 'display: none;' : ''}"
                     />
                     <div class="search-results" id="directorResults"></div>
-                    <input type="hidden" id="selectedDirectorId" />
+                    <input type="hidden" id="selectedDirectorId" value="${preSelectedDirector ? preSelectedDirector.id : ''}" />
                 </div>
-                <div class="selected-item" id="selectedDirector" style="display: none;"></div>
+                <div class="selected-item" id="selectedDirector" style="display: ${preSelectedDirector ? 'block' : 'none'};">
+                    ${preSelectedDirector ? `
+                        <div class="selected-chip">
+                            <span>${preSelectedDirector.name}</span>
+                            <button type="button" class="remove-chip" onclick="clearSelection('selectedDirector', 'directorSearch', 'directorResults')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
+            ` : ''}
 
             <!-- Appointee -->
             <div class="form-field">
@@ -697,17 +925,33 @@ function generateAppointDirectorForm() {
                         class="search-input"
                         placeholder="Search for appointee..."
                         autocomplete="off"
-                        disabled
+                        ${!appointeeEnabled ? 'disabled' : ''}
+                        style="${preSelectedAppointee ? 'display: none;' : ''}"
                     />
                     <div class="search-results" id="appointeeResults"></div>
-                    <input type="hidden" id="selectedAppointeeId" />
+                    <input type="hidden" id="selectedAppointeeId" value="${preSelectedAppointee ? preSelectedAppointee.id : ''}" />
                 </div>
-                <div class="selected-item" id="selectedAppointee" style="display: none;"></div>
+                <div class="selected-item" id="selectedAppointee" style="display: ${preSelectedAppointee ? 'block' : 'none'};">
+                    ${preSelectedAppointee ? `
+                        <div class="selected-chip">
+                            <span>${preSelectedAppointee.name}</span>
+                            <button type="button" class="remove-chip" onclick="clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <a href="#" class="add-person-link" onclick="event.preventDefault(); showAddPersonForm('${appointmentType}');">
+                    Need to add this appointee?
+                </a>
             </div>
 
             <div class="form-actions">
                 <button type="button" class="form-btn-secondary" id="cancelFormBtn">Cancel</button>
-                <button type="submit" class="form-btn-primary" id="submitFormBtn" disabled>Continue</button>
+                <button type="submit" class="form-btn-primary" id="submitFormBtn" ${(isReplacement && preSelectedCompany && preSelectedDirector && preSelectedAppointee) || (!isReplacement && preSelectedCompany && preSelectedAppointee) ? '' : 'disabled'}>Continue</button>
             </div>
         </form>
     `;
@@ -720,7 +964,13 @@ function initializeAppointDirectorForm() {
     const form = document.getElementById('appointDirectorForm');
     const submitBtn = document.getElementById('submitFormBtn');
     
-    if (!companySearch) return;
+    if (!companySearch || !form) return;
+    
+    const appointmentType = form.getAttribute('data-appointment-type');
+    const isReplacement = appointmentType === 'replace';
+    const savedCompanyId = form.getAttribute('data-saved-company');
+    const savedDirectorId = form.getAttribute('data-saved-director');
+    const newlyAddedId = form.getAttribute('data-newly-added');
 
     // Company search
     setupSearchField(
@@ -739,33 +989,41 @@ function initializeAppointDirectorForm() {
         (item) => {
             document.getElementById('selectedCompanyId').value = item.id;
             showSelectedItem('selectedCompany', `${item.flag} ${item.name}`, 'companySearch', 'companyResults');
-            // Enable director search
-            directorSearch.disabled = false;
-            directorSearch.focus();
+            
+            // Enable next field based on appointment type
+            if (isReplacement && directorSearch) {
+                directorSearch.disabled = false;
+                directorSearch.focus();
+            } else if (!isReplacement && appointeeSearch) {
+                appointeeSearch.disabled = false;
+                appointeeSearch.focus();
+            }
             checkFormCompletion();
         }
     );
 
-    // Director search
-    setupSearchField(
-        directorSearch,
-        document.getElementById('directorResults'),
-        mockDirectors,
-        (item) => `
-            <div style="display: flex; flex-direction: column; gap: 2px;">
-                <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
-                <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
-            </div>
-        `,
-        (item) => {
-            document.getElementById('selectedDirectorId').value = item.id;
-            showSelectedItem('selectedDirector', item.name, 'directorSearch', 'directorResults');
-            // Enable appointee search
-            appointeeSearch.disabled = false;
-            appointeeSearch.focus();
-            checkFormCompletion();
-        }
-    );
+    // Director search (only if replacement)
+    if (isReplacement && directorSearch) {
+        setupSearchField(
+            directorSearch,
+            document.getElementById('directorResults'),
+            mockDirectors,
+            (item) => `
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                    <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
+                </div>
+            `,
+            (item) => {
+                document.getElementById('selectedDirectorId').value = item.id;
+                showSelectedItem('selectedDirector', item.name, 'directorSearch', 'directorResults');
+                // Enable appointee search
+                appointeeSearch.disabled = false;
+                appointeeSearch.focus();
+                checkFormCompletion();
+            }
+        );
+    }
 
     // Appointee search
     setupSearchField(
@@ -800,10 +1058,14 @@ function initializeAppointDirectorForm() {
 
     function checkFormCompletion() {
         const companyId = document.getElementById('selectedCompanyId').value;
-        const directorId = document.getElementById('selectedDirectorId').value;
         const appointeeId = document.getElementById('selectedAppointeeId').value;
         
-        submitBtn.disabled = !(companyId && directorId && appointeeId);
+        if (isReplacement) {
+            const directorId = document.getElementById('selectedDirectorId').value;
+            submitBtn.disabled = !(companyId && directorId && appointeeId);
+        } else {
+            submitBtn.disabled = !(companyId && appointeeId);
+        }
     }
 }
 
@@ -903,13 +1165,19 @@ function clearSelection(containerId, inputId, resultsId) {
     const appointeeSearch = document.getElementById('appointeeSearch');
     
     if (inputId === 'companySearch') {
-        if (directorSearch) directorSearch.disabled = true;
-        if (appointeeSearch) appointeeSearch.disabled = true;
-        clearSelection('selectedDirector', 'directorSearch', 'directorResults');
-        clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+        if (directorSearch) {
+            directorSearch.disabled = true;
+            clearSelection('selectedDirector', 'directorSearch', 'directorResults');
+        }
+        if (appointeeSearch) {
+            appointeeSearch.disabled = true;
+            clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+        }
     } else if (inputId === 'directorSearch') {
-        if (appointeeSearch) appointeeSearch.disabled = true;
-        clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+        if (appointeeSearch) {
+            appointeeSearch.disabled = true;
+            clearSelection('selectedAppointee', 'appointeeSearch', 'appointeeResults');
+        }
     }
     
     // Update form state
@@ -917,22 +1185,162 @@ function clearSelection(containerId, inputId, resultsId) {
     if (submitBtn) submitBtn.disabled = true;
 }
 
+function initializeAddPersonForm() {
+    const personCompanySearch = document.getElementById('personCompanySearch');
+    const firstName = document.getElementById('personFirstName');
+    const lastName = document.getElementById('personLastName');
+    const title = document.getElementById('personTitle');
+    const email = document.getElementById('personEmail');
+    const form = document.getElementById('addPersonForm');
+    const submitBtn = document.getElementById('submitAddPersonBtn');
+    
+    if (!personCompanySearch || !form) return;
+
+    // Company search for add person form
+    setupSearchField(
+        personCompanySearch,
+        document.getElementById('personCompanyResults'),
+        mockCompanies,
+        (item) => `
+            <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <span style="font-size: var(--text-lg);">${item.flag}</span>
+                <div style="flex: 1;">
+                    <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                    <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.location}, ${item.country}</div>
+                </div>
+            </div>
+        `,
+        (item) => {
+            document.getElementById('selectedPersonCompanyId').value = item.id;
+            showSelectedItem('selectedPersonCompany', `${item.flag} ${item.name}`, 'personCompanySearch', 'personCompanyResults');
+            checkAddPersonFormCompletion();
+        }
+    );
+
+    // Add input listeners to check form completion
+    [firstName, lastName, title, email].forEach(input => {
+        if (input) {
+            input.addEventListener('input', checkAddPersonFormCompletion);
+        }
+    });
+
+    // Form submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleAddPersonFormSubmit();
+    });
+
+    // Cancel button
+    document.getElementById('cancelAddPersonBtn').addEventListener('click', () => {
+        // Return to appointment form with previous state
+        returnToAppointmentForm();
+    });
+
+    function checkAddPersonFormCompletion() {
+        const companyId = document.getElementById('selectedPersonCompanyId').value;
+        const firstNameVal = firstName.value.trim();
+        const lastNameVal = lastName.value.trim();
+        const titleVal = title.value.trim();
+        const emailVal = email.value.trim();
+        
+        submitBtn.disabled = !(companyId && firstNameVal && lastNameVal && titleVal && emailVal);
+    }
+}
+
+function handleAddPersonFormSubmit() {
+    const firstName = document.getElementById('personFirstName').value.trim();
+    const lastName = document.getElementById('personLastName').value.trim();
+    const title = document.getElementById('personTitle').value.trim();
+    const email = document.getElementById('personEmail').value.trim();
+    const companyId = document.getElementById('selectedPersonCompanyId').value;
+    
+    const company = mockCompanies.find(c => c.id === companyId);
+    
+    if (!firstName || !lastName || !title || !email || !company) return;
+    
+    // Generate new person ID
+    const newId = 'p' + (mockPeople.length + 1);
+    
+    // Create full name (handle nicknames/quotes if any)
+    const fullName = `${firstName} ${lastName}`;
+    
+    // Create new person object
+    const newPerson = {
+        id: newId,
+        name: fullName,
+        title: title,
+        email: email,
+        company: company.name
+    };
+    
+    // Add to mockPeople array
+    mockPeople.push(newPerson);
+    
+    // Add user message
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'user', `Added ${fullName} to the Entities system`);
+        
+        // Show success message
+        setTimeout(() => {
+            addMessageToChat(currentChatId, 'assistant', 
+                `Great! I've added <strong>${fullName}</strong> (${title}) to the Entities system. Now let's complete the appointment.`
+            );
+            
+            // Return to appointment form with the new person selected
+            setTimeout(() => {
+                returnToAppointmentForm(newPerson);
+            }, 600);
+        }, 400);
+    }
+}
+
+function returnToAppointmentForm(newlyAddedPerson = null) {
+    const savedState = window.tempAppointmentFormState || {};
+    const appointmentType = savedState.appointmentType || 'replace';
+    
+    // Show the appointment form again
+    const response = generateAppointDirectorForm(appointmentType, savedState, newlyAddedPerson);
+    
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'assistant', response);
+    }
+}
+
 function handleAppointDirectorFormSubmit() {
+    const form = document.getElementById('appointDirectorForm');
+    const appointmentType = form.getAttribute('data-appointment-type');
+    const isReplacement = appointmentType === 'replace';
+    
     const companyId = document.getElementById('selectedCompanyId').value;
-    const directorId = document.getElementById('selectedDirectorId').value;
     const appointeeId = document.getElementById('selectedAppointeeId').value;
     
     const company = mockCompanies.find(c => c.id === companyId);
-    const director = mockDirectors.find(d => d.id === directorId);
     const appointee = mockAppointees.find(a => a.id === appointeeId);
     
-    if (!company || !director || !appointee) return;
+    let director = null;
+    if (isReplacement) {
+        const directorId = document.getElementById('selectedDirectorId').value;
+        director = mockDirectors.find(d => d.id === directorId);
+        if (!director) return;
+    }
+    
+    if (!company || !appointee) return;
     
     // Store selection for later use
-    window.selectedAppointment = { company, director, appointee };
+    window.selectedAppointment = { 
+        company, 
+        director: director, 
+        appointee,
+        isReplacement 
+    };
     
     // Create summary message from user
-    const userSummary = `I've selected ${company.name}, replacing ${director.name} with ${appointee.name}`;
+    let userSummary;
+    if (isReplacement) {
+        userSummary = `I've selected ${company.name}, replacing ${director.name} with ${appointee.name}`;
+    } else {
+        userSummary = `I've selected ${company.name}, adding ${appointee.name} to the board`;
+    }
     
     if (currentChatId) {
         addMessageToChat(currentChatId, 'user', userSummary);
@@ -963,6 +1371,10 @@ function openAppointmentPanel() {
     // Show the right panel
     chatView.classList.add('show-right-panel');
     
+    // Update panel title
+    const { isReplacement } = window.selectedAppointment || {};
+    document.querySelector('.right-panel-title').textContent = isReplacement ? 'Replace Director' : 'Add Director';
+    
     // Populate the panel content
     const panelContent = document.querySelector('.right-panel-content');
     panelContent.innerHTML = generateAppointmentPanelContent();
@@ -972,9 +1384,9 @@ function openAppointmentPanel() {
 }
 
 function generateAppointmentPanelContent() {
-    const { company, director, appointee } = window.selectedAppointment || {};
+    const { company, director, appointee, isReplacement } = window.selectedAppointment || {};
     
-    if (!company || !director || !appointee) {
+    if (!company || !appointee) {
         return '<p>Error: Appointment data not found</p>';
     }
     
@@ -991,6 +1403,7 @@ function generateAppointmentPanelContent() {
                         <div class="summary-meta">Domiciled in ${company.location}, ${company.country}</div>
                     </div>
                     
+                    ${isReplacement && director ? `
                     <div class="summary-divider"></div>
                     
                     <div class="summary-item">
@@ -998,11 +1411,12 @@ function generateAppointmentPanelContent() {
                         <div class="summary-value">${director.name}</div>
                         <div class="summary-meta">${director.title}</div>
                     </div>
+                    ` : ''}
                     
                     <div class="summary-divider"></div>
                     
                     <div class="summary-item">
-                        <label class="summary-label">Appointee</label>
+                        <label class="summary-label">${isReplacement ? 'Appointee' : 'New Director'}</label>
                         <div class="summary-value">${appointee.name}</div>
                         <div class="summary-meta">${appointee.title}</div>
                     </div>
@@ -1132,7 +1546,7 @@ function generateAppointmentPanelContent() {
                         <div class="workflow-step-content">
                             <div class="workflow-step-title">Update Entity Records</div>
                             <div class="workflow-step-description">
-                                Update <strong>Entities</strong> system to reflect ${director.name}'s resignation and ${appointee.name}'s appointment to the board.
+                                Update <strong>Entities</strong> system to reflect ${isReplacement && director ? `${director.name}'s resignation and ` : ''}${appointee.name}'s appointment to the board.
                             </div>
                         </div>
                     </div>
@@ -1205,9 +1619,9 @@ function startAppointmentWorkflow() {
     }
     
     // Get selected appointment data
-    const { company, director, appointee } = window.selectedAppointment || {};
+    const { company, director, appointee, isReplacement } = window.selectedAppointment || {};
     
-    if (!company || !director || !appointee) {
+    if (!company || !appointee) {
         console.error('Appointment data not found');
         return;
     }
@@ -1216,11 +1630,19 @@ function startAppointmentWorkflow() {
     currentAppointment = {
         company: company.name,
         companyMeta: `Domiciled in ${company.location}, ${company.country}`,
-        resigningDirector: director.name,
-        resigningDirectorTitle: director.title,
+        resigningDirector: isReplacement && director ? director.name : null,
+        resigningDirectorTitle: isReplacement && director ? director.title : null,
         appointee: appointee.name,
-        appointeeTitle: appointee.title
+        appointeeTitle: appointee.title,
+        isReplacement: isReplacement
     };
+    
+    // Build entity update substeps based on appointment type
+    const entitySubsteps = [];
+    if (isReplacement && director) {
+        entitySubsteps.push({ id: 'entity-resign', name: `Record ${director.name} resignation`, status: 'pending', time: null });
+    }
+    entitySubsteps.push({ id: 'entity-appoint', name: `Record ${appointee.name} appointment`, status: 'pending', time: null });
     
     // Initialize workflow steps with sub-statuses
     processSteps = [
@@ -1249,10 +1671,7 @@ function startAppointmentWorkflow() {
             id: 'entity-update',
             name: 'Update Entity Records',
             description: 'Update Entities system to reflect board changes',
-            substeps: [
-                { id: 'entity-resign', name: `Record ${director.name} resignation`, status: 'pending', time: null },
-                { id: 'entity-appoint', name: `Record ${appointee.name} appointment`, status: 'pending', time: null }
-            ]
+            substeps: entitySubsteps
         }
     ];
     
@@ -1331,13 +1750,15 @@ function generateInProgressPanel() {
                         <div class="summary-value">${currentAppointment.company}</div>
                     </div>
                     
+                    ${currentAppointment.resigningDirector ? `
                     <div class="summary-item-compact">
                         <label class="summary-label">Resigning Director</label>
                         <div class="summary-value">${currentAppointment.resigningDirector}</div>
                     </div>
+                    ` : ''}
                     
                     <div class="summary-item-compact">
-                        <label class="summary-label">Appointee</label>
+                        <label class="summary-label">${currentAppointment.isReplacement ? 'Appointee' : 'New Director'}</label>
                         <div class="summary-value">${currentAppointment.appointee}</div>
                     </div>
                 </div>
