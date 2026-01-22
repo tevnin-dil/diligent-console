@@ -1056,6 +1056,14 @@ body {
    HYBRID FORM INTERFACE
    ============================================ */
 
+.appointment-type-btn {
+    font-family: var(--font-sans);
+}
+
+.appointment-type-btn:active {
+    transform: scale(0.98);
+}
+
 .hybrid-form {
     display: flex;
     flex-direction: column;
@@ -1156,6 +1164,20 @@ body {
 
 .selected-item {
     margin-top: var(--space-2);
+}
+
+.add-person-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.add-person-link:hover {
+    color: var(--color-gray-900);
+    text-decoration: underline;
 }
 
 .selected-chip {
