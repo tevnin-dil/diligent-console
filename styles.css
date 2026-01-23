@@ -1005,6 +1005,55 @@ body {
     margin: var(--space-3) 0;
 }
 
+/* Approvers List */
+.approvers-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.approver-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-gray-50);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-gray-200);
+}
+
+.approver-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-gray-700);
+    flex-shrink: 0;
+}
+
+.approver-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.approver-name {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-gray-900);
+}
+
+.approver-role {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+}
+
 /* Document List */
 .document-list {
     display: flex;

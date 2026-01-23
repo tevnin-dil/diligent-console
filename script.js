@@ -30,6 +30,7 @@ const responseContent = document.getElementById('responseContent');
 
 // Quick action buttons
 const chatsBtn = document.getElementById('chatsBtn');
+const appointBtn = document.getElementById('appointBtn');
 const openAppBtn = document.getElementById('openAppBtn');
 const appDropdown = document.getElementById('appDropdown');
 
@@ -81,6 +82,10 @@ document.querySelectorAll('.suggestion-chip').forEach(chip => {
 chatsBtn.addEventListener('click', function() {
     // Transition to chat view showing recent chats
     transitionToChatView();
+});
+
+appointBtn.addEventListener('click', function() {
+    setPromptAndSend('Appoint a Director');
 });
 
 openAppBtn.addEventListener('click', function(e) {
@@ -1476,6 +1481,50 @@ function generateAppointmentPanelContent() {
                 </div>
             </section>
 
+            <!-- Approvers Section -->
+            <section class="panel-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
+                    <h4 class="panel-section-title" style="margin: 0; flex: 1;">Approvers</h4>
+                    <button class="panel-btn-secondary" onclick="editApproversList()" style="font-size: var(--text-sm); padding: var(--space-2) var(--space-3); flex-shrink: 0; white-space: nowrap;">
+                        Edit List
+                    </button>
+                </div>
+                
+                <div class="approvers-list">
+                    <div class="approver-item">
+                        <div class="approver-avatar">RJ</div>
+                        <div class="approver-info">
+                            <div class="approver-name">Robert Johnson</div>
+                            <div class="approver-role">Board Chair</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approver-item">
+                        <div class="approver-avatar">MS</div>
+                        <div class="approver-info">
+                            <div class="approver-name">Margaret Sullivan</div>
+                            <div class="approver-role">Chief Executive Officer</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approver-item">
+                        <div class="approver-avatar">JD</div>
+                        <div class="approver-info">
+                            <div class="approver-name">James Davidson</div>
+                            <div class="approver-role">Lead Independent Director</div>
+                        </div>
+                    </div>
+                    
+                    <div class="approver-item">
+                        <div class="approver-avatar">LW</div>
+                        <div class="approver-info">
+                            <div class="approver-name">Linda Williams</div>
+                            <div class="approver-role">Audit Committee Chair</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Documents Section -->
             <section class="panel-section">
                 <h4 class="panel-section-title">Required Documents</h4>
@@ -1647,6 +1696,14 @@ function closeAppointmentPanel() {
     }
 }
 
+function editApproversList() {
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'assistant', 
+            'The approvers list editor would open here. You could add, remove, or reorder board members who need to approve this director appointment.'
+        );
+    }
+}
+
 function startAppointmentWorkflow() {
     // Initialize process state
     processRunning = true;
@@ -1694,7 +1751,10 @@ function startAppointmentWorkflow() {
             substeps: [
                 { id: 'approval-create', name: 'Create approval request', status: 'completed', time: 'Jan 7, 9:00 AM' },
                 { id: 'approval-send', name: 'Send to board members', status: 'in_progress', time: null },
-                { id: 'approval-return', name: 'Await approval responses', status: 'pending', time: null },
+                { id: 'approval-johnson', name: 'Robert Johnson - Board Chair', status: 'pending', time: null, vote: null },
+                { id: 'approval-sullivan', name: 'Margaret Sullivan - CEO', status: 'pending', time: null, vote: null },
+                { id: 'approval-davidson', name: 'James Davidson - Lead Independent Director', status: 'pending', time: null, vote: null },
+                { id: 'approval-williams', name: 'Linda Williams - Audit Committee Chair', status: 'pending', time: null, vote: null },
                 { id: 'approval-store', name: 'Store signed Board Resolution', status: 'pending', time: null, docLink: 'board-resolution-signed' }
             ]
         },
@@ -1880,12 +1940,12 @@ function generateStepHTML(step, stepIdx) {
                             ${getStatusIcon(substep.status)}
                         </div>
                         <div class="substep-content">
-                            <div class="substep-name">${substep.name}</div>
+                            <div class="substep-name">${substep.name}${substep.vote ? ` • <span style="color: #10b981; font-weight: 600;">${substep.vote}</span>` : ''}</div>
                             ${substep.status === 'in_progress' 
                                 ? '<div class="substep-meta">In progress...</div>'
                                 : substep.time 
                                     ? `<div class="substep-meta">
-                                        Completed ${substep.time}
+                                        ${substep.vote ? 'Responded' : 'Completed'} ${substep.time}
                                         ${substep.docLink && substep.status === 'completed' 
                                             ? ` • <a href="#" onclick="event.preventDefault(); openDocumentFromWorkflow('${substep.docLink}');" style="color: var(--color-gray-900); font-weight: 500; text-decoration: underline;">Open document</a>`
                                             : ''
@@ -1971,7 +2031,10 @@ function simulateLiveUpdates() {
     const timeline = {
         // Business Day 1: Tuesday, Jan 7 - Board Approval starts
         'approval-send': 'Jan 7, 9:15 AM',
-        'approval-return': 'Jan 8, 4:30 PM',
+        'approval-johnson': 'Jan 7, 2:30 PM',
+        'approval-sullivan': 'Jan 8, 10:15 AM',
+        'approval-davidson': 'Jan 8, 3:45 PM',
+        'approval-williams': 'Jan 8, 4:30 PM',
         'approval-store': 'Jan 8, 4:45 PM',
         
         // Business Day 3: Thursday, Jan 9 - Forms preparation and sending
@@ -2046,6 +2109,11 @@ function simulateLiveUpdates() {
             if (substep) {
                 substep.status = update.status;
                 substep.time = update.time;
+                
+                // For approver substeps, set vote to "Approved" when completed
+                if (substep.id.startsWith('approval-') && substep.id !== 'approval-create' && substep.id !== 'approval-send' && substep.id !== 'approval-store' && update.status === 'completed') {
+                    substep.vote = 'Approved';
+                }
                 
                 // Refresh the panel if it's open
                 if (chatView.classList.contains('show-right-panel')) {
