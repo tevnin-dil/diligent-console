@@ -1646,7 +1646,7 @@ function startAppointmentWorkflow() {
             name: 'Create Board Approval',
             description: 'Submit Board Resolution to the Boards system for asynchronous approval',
             substeps: [
-                { id: 'approval-create', name: 'Create approval request', status: 'completed', time: '2 min ago' },
+                { id: 'approval-create', name: 'Create approval request', status: 'completed', time: 'Jan 7, 9:00 AM' },
                 { id: 'approval-send', name: 'Send to board members', status: 'in_progress', time: null },
                 { id: 'approval-return', name: 'Await approval responses', status: 'pending', time: null },
                 { id: 'approval-store', name: 'Store signed Board Resolution', status: 'pending', time: null, docLink: 'board-resolution-signed' }
@@ -1858,12 +1858,12 @@ function generateStepHTML(step, stepIdx) {
 function getStatusIcon(status) {
     switch(status) {
         case 'completed':
-            return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            return '<div class="status-dot status-dot-completed"></div>';
         case 'in_progress':
-            return '<div class="spinner-small"></div>';
+            return '<div class="status-dot status-dot-in-progress"></div>';
         case 'pending':
         default:
-            return '<div class="pending-dot"></div>';
+            return '<div class="status-dot status-dot-pending"></div>';
     }
 }
 
@@ -1921,6 +1921,31 @@ function reopenStatusPanel() {
 function simulateLiveUpdates() {
     if (!processRunning || processPaused) return;
     
+    // Timeline spanning 5 business days (Jan 7-13, 2025, skipping weekend)
+    const timeline = {
+        // Business Day 1: Tuesday, Jan 7 - Board Approval starts
+        'approval-send': 'Jan 7, 9:15 AM',
+        'approval-return': 'Jan 8, 4:30 PM',
+        'approval-store': 'Jan 8, 4:45 PM',
+        
+        // Business Day 3: Thursday, Jan 9 - Forms preparation and sending
+        'forms-create': 'Jan 9, 10:00 AM',
+        'forms-send': 'Jan 9, 10:30 AM',
+        'forms-receive': 'Jan 10, 2:15 PM',
+        'forms-validate': 'Jan 10, 2:30 PM',
+        'forms-store': 'Jan 10, 2:45 PM',
+        
+        // Business Day 4: Friday, Jan 10 - Regulatory filing
+        'filing-prepare': 'Jan 10, 3:00 PM',
+        'filing-submit': 'Jan 10, 4:00 PM',
+        'filing-confirm': 'Jan 13, 11:00 AM',
+        'filing-store': 'Jan 13, 11:15 AM',
+        
+        // Business Day 5: Monday, Jan 13 - Entity updates
+        'entity-resign': 'Jan 13, 2:00 PM',
+        'entity-appoint': 'Jan 13, 2:15 PM'
+    };
+    
     // Build updates dynamically based on actual process steps
     const updates = [];
     let currentDelay = 2000;
@@ -1942,12 +1967,12 @@ function simulateLiveUpdates() {
                 currentDelay = Math.floor(Math.random() * 2000) + 1500; // 1.5-3.5s
             }
             
-            // Add completed update
+            // Add completed update with realistic timestamp
             updates.push({
                 stepId: step.id,
                 substepId: substep.id,
                 status: 'completed',
-                time: 'Just now',
+                time: timeline[substep.id] || 'Completed',
                 delay: currentDelay
             });
             currentDelay = Math.floor(Math.random() * 2000) + 2000; // 2-4s
