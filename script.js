@@ -708,7 +708,7 @@ const mockCompanies = [
 ];
 
 const mockPeople = [
-    { id: 'p1', name: 'Wei "David" Chen', title: 'Vice President, Commercial Operations (APAC)' },
+    { id: 'p1', name: 'Wei "David" Chen', title: 'Vice President, Commercial Operations (APAC)', company: 'Pacific Polymer Logistics Pte. Ltd.' },
     { id: 'p2', name: 'Priya Nair', title: 'Regional Finance Director, APAC' },
     { id: 'p3', name: 'James "Jim" Sterling', title: 'Senior Director, Supply Chain & Logistics' },
     { id: 'p4', name: 'Elena Rossi', title: 'General Counsel, Asia Pacific' },
@@ -1731,6 +1731,7 @@ function generateDirectorDisambiguation() {
                 onmouseout="this.style.background='var(--color-white)'; this.style.borderColor='var(--color-gray-300)';">
                 <div style="font-size: var(--text-lg); font-weight: 600; color: var(--color-gray-900);">Wei "David" Chen</div>
                 <div style="font-size: var(--text-base); color: var(--color-gray-700);">Vice President, Commercial Operations (APAC)</div>
+                <div style="font-size: var(--text-sm); color: var(--color-gray-600);">Pacific Polymer Logistics Pte. Ltd.</div>
             </button>
             
             <button 
