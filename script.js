@@ -393,6 +393,9 @@ function appendMessageToThread(message) {
     if (message.content.includes('addPersonForm')) {
         setTimeout(() => initializeAddPersonForm(), 100);
     }
+    if (message.content.includes('replacementAppointeeSearchField')) {
+        setTimeout(() => initializeReplacementAppointeeSearch(), 100);
+    }
     
     // Scroll to bottom
     chatThread.scrollTop = chatThread.scrollHeight;
@@ -594,6 +597,9 @@ function generateResponse(message) {
                 </div>
             </div>
         `;
+    } else if (lowerMessage.includes('replace') && lowerMessage.includes('director') && (lowerMessage.includes('david') || lowerMessage.includes('chen'))) {
+        // Handle "Replace director David Chen" pattern with disambiguation
+        return generateDirectorDisambiguation();
     } else if (lowerMessage.includes('appoint') && lowerMessage.includes('director')) {
         // Check if user is specifying replace or add
         if (lowerMessage.includes('replace')) {
@@ -709,7 +715,8 @@ const mockPeople = [
     { id: 'p5', name: 'Lim Pei Shan', title: 'Director of Risk Management & Trade Compliance' },
     { id: 'p6', name: 'Kenji Tanaka', title: 'Head of Digital Transformation, APAC' },
     { id: 'p7', name: 'Siti Nurhaliza', title: 'Human Resources Director, APAC' },
-    { id: 'p8', name: 'Michael O\'Connell', title: 'Plant Manager - Jurong Island Compounding Facility' }
+    { id: 'p8', name: 'Michael O\'Connell', title: 'Plant Manager - Jurong Island Compounding Facility' },
+    { id: 'p9', name: 'David Chenney', title: 'Vice President, Manufacturing Operations', company: 'DuraFlow Composites, Inc.' }
 ];
 
 // Use same dataset for both directors and appointees
@@ -1702,6 +1709,165 @@ function editApproversList() {
             'The approvers list editor would open here. You could add, remove, or reorder board members who need to approve this director appointment.'
         );
     }
+}
+
+// ============================================
+// CONVERSATIONAL DIRECTOR REPLACEMENT FLOW
+// ============================================
+
+function generateDirectorDisambiguation() {
+    return `
+        <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Replace Subsidiary Director</h3>
+        <p style="margin-bottom: var(--space-4); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            I found 2 directors matching "David Chen". Please select which director you'd like to replace:
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <button 
+                class="director-selection-btn" 
+                onclick="selectDisambiguatedDirector('p1')"
+                style="background: var(--color-white); border: 1px solid var(--color-gray-300); border-radius: var(--radius-lg); padding: var(--space-4); text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; gap: var(--space-2);"
+                onmouseover="this.style.background='var(--color-gray-50)'; this.style.borderColor='var(--color-gray-400)';"
+                onmouseout="this.style.background='var(--color-white)'; this.style.borderColor='var(--color-gray-300)';">
+                <div style="font-size: var(--text-lg); font-weight: 600; color: var(--color-gray-900);">Wei "David" Chen</div>
+                <div style="font-size: var(--text-base); color: var(--color-gray-700);">Vice President, Commercial Operations (APAC)</div>
+            </button>
+            
+            <button 
+                class="director-selection-btn" 
+                onclick="selectDisambiguatedDirector('p9')"
+                style="background: var(--color-white); border: 1px solid var(--color-gray-300); border-radius: var(--radius-lg); padding: var(--space-4); text-align: left; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; gap: var(--space-2);"
+                onmouseover="this.style.background='var(--color-gray-50)'; this.style.borderColor='var(--color-gray-400)';"
+                onmouseout="this.style.background='var(--color-white)'; this.style.borderColor='var(--color-gray-300)';">
+                <div style="font-size: var(--text-lg); font-weight: 600; color: var(--color-gray-900);">David Chenney</div>
+                <div style="font-size: var(--text-base); color: var(--color-gray-700);">Vice President, Manufacturing Operations</div>
+                <div style="font-size: var(--text-sm); color: var(--color-gray-600);">DuraFlow Composites, Inc.</div>
+            </button>
+        </div>
+    `;
+}
+
+function selectDisambiguatedDirector(directorId) {
+    const director = mockPeople.find(p => p.id === directorId);
+    
+    if (!director) return;
+    
+    // Store the selected director temporarily
+    window.selectedDisambiguatedDirector = director;
+    
+    // Send user message showing their selection
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'user', director.name);
+        
+        // Show appointee search
+        setTimeout(() => {
+            const response = generateAppointeeSearchForReplacement(directorId);
+            addMessageToChat(currentChatId, 'assistant', response);
+        }, 400);
+    }
+}
+
+function generateAppointeeSearchForReplacement(directorId) {
+    const director = mockPeople.find(p => p.id === directorId);
+    
+    return `
+        <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Select Appointee</h3>
+        <p style="margin-bottom: var(--space-4); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            Great! Now search for the person who will replace <strong>${director.name}</strong>:
+        </p>
+        
+        <div class="form-field" id="replacementAppointeeSearchField">
+            <label class="form-label">Search for Appointee</label>
+            <div class="search-field-wrapper">
+                <input 
+                    type="text" 
+                    id="replacementAppointeeSearch" 
+                    class="search-input"
+                    placeholder="Type name to search..."
+                />
+                <div id="selectedReplacementAppointee" class="selected-item" style="display: none;"></div>
+                <div id="replacementAppointeeResults" class="search-results" style="display: none;"></div>
+                <input type="hidden" id="selectedReplacementAppointeeId" value="">
+            </div>
+        </div>
+        
+        <div style="margin-top: var(--space-4);">
+            <button 
+                id="continueToPreviewBtn" 
+                class="panel-btn-primary" 
+                onclick="continueToPreviewPanel()"
+                disabled
+                style="opacity: 0.5; cursor: not-allowed;">
+                Continue to Preview
+            </button>
+        </div>
+    `;
+}
+
+function continueToPreviewPanel() {
+    const director = window.selectedDisambiguatedDirector;
+    const appointeeId = document.getElementById('selectedReplacementAppointeeId').value;
+    const appointee = mockPeople.find(p => p.id === appointeeId);
+    
+    if (!director || !appointee) return;
+    
+    // Find the company for this director (defaulting to Pacific Polymer Logistics for demo)
+    const company = mockCompanies[4]; // Pacific Polymer Logistics Pte. Ltd. (Singapore)
+    
+    // Store appointment data
+    window.selectedAppointment = {
+        company: company,
+        director: director,
+        appointee: appointee,
+        isReplacement: true
+    };
+    
+    // Send user message
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'user', `Replace ${director.name} with ${appointee.name} at ${company.name}`);
+        
+        // Show confirmation and open panel
+        setTimeout(() => {
+            addMessageToChat(currentChatId, 'assistant', 
+                `Perfect! I've prepared the appointment workflow to replace ${director.name} with ${appointee.name} at ${company.name}. Review the details in the panel on the right.`
+            );
+            openAppointmentPanel();
+        }, 400);
+    }
+}
+
+function initializeReplacementAppointeeSearch() {
+    const appointeeSearch = document.getElementById('replacementAppointeeSearch');
+    const continueBtn = document.getElementById('continueToPreviewBtn');
+    
+    if (!appointeeSearch) return;
+    
+    // Setup appointee search field
+    setupSearchField(
+        appointeeSearch,
+        document.getElementById('replacementAppointeeResults'),
+        mockAppointees,
+        (item) => `
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
+            </div>
+        `,
+        (item) => {
+            document.getElementById('selectedReplacementAppointeeId').value = item.id;
+            showSelectedItem('selectedReplacementAppointee', item.name, 'replacementAppointeeSearch', 'replacementAppointeeResults');
+            
+            // Enable continue button
+            if (continueBtn) {
+                continueBtn.disabled = false;
+                continueBtn.style.opacity = '1';
+                continueBtn.style.cursor = 'pointer';
+            }
+        }
+    );
+    
+    // Focus the search field
+    appointeeSearch.focus();
 }
 
 function startAppointmentWorkflow() {
