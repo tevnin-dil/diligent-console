@@ -7,22 +7,130 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Left Navigation Rail -->
+    <nav class="nav-rail">
+        <div class="nav-rail-logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="8" fill="var(--color-gray-800)"/>
+                <rect x="8" y="8" width="16" height="16" rx="2" fill="var(--color-white)"/>
+            </svg>
+        </div>
+        
+        <div class="nav-rail-items">
+            <button class="nav-rail-item active" id="navHome" title="Home">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navConsole" title="Console">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="4 17 10 11 4 5"></polyline>
+                    <line x1="12" y1="19" x2="20" y2="19"></line>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navDocs" title="Documents">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navReports" title="Reports">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="9" x2="9" y2="15"></line>
+                    <line x1="15" y1="9" x2="15" y2="15"></line>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navTools" title="Tools">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5"></path>
+                    <path d="M2 12l10 5 10-5"></path>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navAnalytics" title="Analytics">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </button>
+            
+            <button class="nav-rail-item" id="navTeam" title="Team">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Top Header -->
+    <div class="top-header" id="topHeader">
+        <div class="top-header-left">
+            <div class="company-selector">
+                <div class="company-logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="var(--color-gray-800)"/>
+                        <path d="M16 8L22 20H10L16 8Z" fill="var(--color-white)"/>
+                        <rect x="14" y="22" width="4" height="2" fill="var(--color-white)"/>
+                    </svg>
+                </div>
+                <span class="company-name">Acme, Inc.</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dropdown-icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </div>
+        </div>
+        <div class="top-header-right">
+            <button class="header-icon-btn" title="Keyboard shortcuts">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                    <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"></path>
+                </svg>
+            </button>
+            <button class="header-icon-btn" title="Notifications">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span class="notification-badge">10</span>
+            </button>
+            <button class="header-icon-btn" title="User profile">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
     <!-- Hero View (initial state) -->
     <div class="container" id="heroView">
-        <!-- Welcome Section -->
-        <header class="welcome-section">
-            <div class="welcome-avatar">
-                <div class="avatar-circle">SH</div>
-                <span class="avatar-status"></span>
-            </div>
-            <div class="welcome-text">
-                <h1 class="welcome-title">Good morning, Sarah.</h1>
-                <p class="welcome-subtitle">Where should we get started today?</p>
-            </div>
-        </header>
+        <!-- Main Content Area -->
+        <div class="hero-main">
+            <!-- Welcome Section -->
+            <header class="welcome-section">
+                <div class="welcome-avatar">
+                    <div class="avatar-circle">SH</div>
+                    <span class="avatar-status"></span>
+                </div>
+                <div class="welcome-text">
+                    <h1 class="welcome-title">Good morning, Sarah.</h1>
+                    <p class="welcome-subtitle">Where should we get started today?</p>
+                </div>
+            </header>
 
-        <!-- Quick Action Buttons -->
-        <div class="quick-actions">
+            <!-- Quick Action Buttons -->
+            <div class="quick-actions">
             <button class="action-btn action-btn-large" id="chatsBtn">
                 <div class="action-btn-content">
                     <span class="action-label-large">View recent chats</span>
@@ -82,10 +190,214 @@
             </div>
         </div>
 
-        <!-- Response Area (hidden by default) -->
-        <div class="response-area" id="responseArea" style="display: none;">
-            <div class="response-content" id="responseContent"></div>
+            <!-- Response Area (hidden by default) -->
+            <div class="response-area" id="responseArea" style="display: none;">
+                <div class="response-content" id="responseContent"></div>
+            </div>
+
+            <!-- App Tiles Section -->
+            <section class="app-tiles-section">
+                <!-- Favorite Apps -->
+                <div class="app-tiles-header">
+                    <h3 class="app-tiles-title">Favorite Apps</h3>
+                </div>
+                <div class="app-tiles-grid">
+                    <a href="#" class="app-tile">
+                        <div class="app-tile-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <span class="app-tile-label">Boards</span>
+                    </a>
+                    <a href="#" class="app-tile">
+                        <div class="app-tile-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <span class="app-tile-label">Entities</span>
+                    </a>
+                    <button class="app-tile app-tile-add" id="addFavoriteBtn">
+                        <div class="app-tile-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4">
+                                <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                            </svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="plus-icon">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                        <span class="app-tile-label">Add favorite</span>
+                    </button>
+                </div>
+
+                <!-- Show All Apps Divider -->
+                <div class="show-all-divider">
+                    <button class="show-all-btn" id="showAllAppsBtn">
+                        <span>Show All Apps</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chevron-icon">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- All Apps Grid (hidden by default) -->
+                <div class="all-apps-container" id="allAppsContainer" style="display: none;">
+                    <div class="app-category">
+                        <h4 class="app-category-title">Boards & <span class="highlight">Governance</span></h4>
+                        <div class="app-tiles-grid">
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Boards</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">BoardEffect</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Community</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="app-category">
+                        <h4 class="app-category-title">Risk & <span class="highlight">Strategy</span></h4>
+                        <div class="app-tiles-grid">
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Risk Manager</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">AI Risk Essentials</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Asset Manager</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                        <polyline points="2 17 12 22 22 17"></polyline>
+                                        <polyline points="2 12 12 17 22 12"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Strategy</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Asset Inventory</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="app-category">
+                        <h4 class="app-category-title">Compliance & <span class="highlight">Legal</span></h4>
+                        <div class="app-tiles-grid">
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Compliance Manager</span>
+                            </a>
+                            <a href="#" class="app-tile">
+                                <div class="app-tile-icon">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                </div>
+                                <span class="app-tile-label">Entities</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+
+        <!-- What's New Sidebar -->
+        <aside class="whats-new-sidebar">
+            <div class="whats-new-header">
+                <span class="whats-new-label">WHAT'S NEW</span>
+                <h2 class="whats-new-title">Good to Know & Good to Go</h2>
+                <p class="whats-new-subtitle">Learn more about features and capabilities you already have today.</p>
+            </div>
+
+            <div class="whats-new-items">
+                <article class="whats-new-item">
+                    <h3 class="whats-new-item-title">Diligent Insights: Calm governance in steady-state</h3>
+                    <p class="whats-new-item-description">A short read on maintaining confidence between cycles.</p>
+                    <a href="#" class="whats-new-item-link">OPEN</a>
+                </article>
+
+                <article class="whats-new-item">
+                    <h3 class="whats-new-item-title">New AI capability: auto-summaries for quiet periods</h3>
+                    <p class="whats-new-item-description">Weekly summaries that highlight what stayed the same.</p>
+                    <a href="#" class="whats-new-item-link">OPEN</a>
+                </article>
+
+                <article class="whats-new-item">
+                    <h3 class="whats-new-item-title">Recently added: lightweight assurance notes</h3>
+                    <p class="whats-new-item-description">Capture brief, optional notes without creating new tasks.</p>
+                    <a href="#" class="whats-new-item-link">OPEN</a>
+                </article>
+            </div>
+        </aside>
     </div>
 
     <!-- Chat View (hidden initially) -->
