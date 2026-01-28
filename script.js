@@ -34,6 +34,17 @@ const appointBtn = document.getElementById('appointBtn');
 const openAppBtn = document.getElementById('openAppBtn');
 const appDropdown = document.getElementById('appDropdown');
 
+// Navigation rail buttons
+const navHome = document.getElementById('navHome');
+const navConsole = document.getElementById('navConsole');
+
+// Top header
+const topHeader = document.getElementById('topHeader');
+
+// App Tiles
+const showAllAppsBtn = document.getElementById('showAllAppsBtn');
+const allAppsContainer = document.getElementById('allAppsContainer');
+
 // ============================================
 // CHAT VIEW ELEMENTS
 // ============================================
@@ -112,6 +123,40 @@ document.addEventListener('click', function(e) {
     }
 });
 
+// Show All Apps toggle
+showAllAppsBtn.addEventListener('click', function() {
+    const isExpanded = allAppsContainer.style.display === 'block';
+    if (isExpanded) {
+        allAppsContainer.style.display = 'none';
+        showAllAppsBtn.classList.remove('expanded');
+        showAllAppsBtn.querySelector('span').textContent = 'Show All Apps';
+    } else {
+        allAppsContainer.style.display = 'block';
+        showAllAppsBtn.classList.add('expanded');
+        showAllAppsBtn.querySelector('span').textContent = 'Hide All Apps';
+    }
+});
+
+// Navigation rail handlers
+navHome.addEventListener('click', function() {
+    transitionToHeroView();
+    updateNavRailActive('navHome');
+});
+
+navConsole.addEventListener('click', function() {
+    transitionToChatView();
+    updateNavRailActive('navConsole');
+});
+
+function updateNavRailActive(activeId) {
+    // Remove active class from all nav items
+    document.querySelectorAll('.nav-rail-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    // Add active class to selected item
+    document.getElementById(activeId).classList.add('active');
+}
+
 // Helper function to set prompt and send (transitions to chat view)
 function setPromptAndSend(message) {
     transitionToChatView(message);
@@ -134,12 +179,16 @@ function sendMessage() {
 // ============================================
 
 function transitionToChatView(initialMessage) {
-    // Hide hero view
+    // Hide hero view and header
     heroView.style.display = 'none';
+    topHeader.style.display = 'none';
     
     // Show chat view
     chatView.style.display = 'grid';
     currentView = 'chat';
+    
+    // Update navigation rail
+    updateNavRailActive('navConsole');
     
     // If initial message provided, create new chat; otherwise just show chat history
     if (initialMessage) {
@@ -154,12 +203,16 @@ function transitionToChatView(initialMessage) {
 }
 
 function transitionToHeroView() {
-    // Show hero view
+    // Show hero view and header
     heroView.style.display = 'flex';
+    topHeader.style.display = 'flex';
     
     // Hide chat view
     chatView.style.display = 'none';
     currentView = 'hero';
+    
+    // Update navigation rail
+    updateNavRailActive('navHome');
     
     // Clear response area
     responseArea.style.display = 'none';
