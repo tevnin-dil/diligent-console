@@ -190,6 +190,54 @@
             </div>
         </div>
 
+            <!-- What Can I Do Link -->
+            <div class="what-can-i-do-link">
+                <a href="#" id="whatCanIDoBtn">What can I do?</a>
+            </div>
+
+            <!-- Assist Capabilities Container (hidden by default) -->
+            <div class="assist-capabilities" id="assistCapabilities" style="display: none;">
+                <div class="capabilities-header">
+                    <h3 class="capabilities-title">Assist Capabilities</h3>
+                    <button class="close-capabilities-btn" id="closeCapabilitiesBtn" title="Close">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Alert Box -->
+                <div class="capabilities-alert">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="alert-icon">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p class="alert-text">We're early in creating these features. More assist capabilities will be available soon!</p>
+                </div>
+
+                <!-- Capability Item -->
+                <div class="capability-item">
+                    <div class="capability-header-row">
+                        <h4 class="capability-title">Appoint a Director</h4>
+                        <button class="capability-try-btn" data-example="Appoint a Director">Try</button>
+                    </div>
+                    <p class="capability-description">
+                        Automate the entire director appointment process. I'll guide you through selecting the company, identifying the director (if replacing), choosing the appointee, and managing approvals. Once confirmed, I'll generate and file all required documentation including board resolutions and regulatory forms.
+                    </p>
+                    <div class="capability-examples">
+                        <p class="examples-label">Try these prompts:</p>
+                        <ul class="examples-list">
+                            <li class="example-item">Type "Appoint &lt;Director Name&gt; to &lt;Company Name&gt;"</li>
+                            <li class="example-item">Type "Replace Director &lt;Director Name&gt;"</li>
+                            <li class="example-item">Click "Appoint a Director" and follow the instructions</li>
+                            <li class="example-item">Upload a "Consent to Act" document</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- Response Area (hidden by default) -->
             <div class="response-area" id="responseArea" style="display: none;">
                 <div class="response-content" id="responseContent"></div>

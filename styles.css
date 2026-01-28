@@ -20,8 +20,11 @@
     
     /* Accent colors */
     --color-red-600: #dc2626;
+    --color-blue-50: #eff6ff;
+    --color-blue-200: #bfdbfe;
     --color-blue-500: #3b82f6;
     --color-blue-600: #2563eb;
+    --color-blue-900: #1e3a8a;
     --color-green-500: #22c55e;
     
     /* Spacing scale */
@@ -646,6 +649,16 @@ body {
     gap: var(--space-2);
     padding: var(--space-2);
 }
+
+.prompt-input {
+    flex: 1;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    font-size: var(--text-base);
+    font-family: var(--font-sans);
+    resize: vertical;
+    min-height: 80px;
     max-height: 200px;
     line-height: var(--leading-normal);
     transition: all 0.2s ease;
@@ -755,6 +768,167 @@ body {
 }
 
 /* Response Area */
+/* What Can I Do Link */
+.what-can-i-do-link {
+    text-align: center;
+    margin-top: var(--space-3);
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.what-can-i-do-link a {
+    font-size: var(--text-sm);
+    color: var(--color-gray-600);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.what-can-i-do-link a:hover {
+    color: var(--color-gray-900);
+}
+
+/* Assist Capabilities */
+.assist-capabilities {
+    margin-top: var(--space-6);
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    animation: slideUp 0.3s ease;
+}
+
+.capabilities-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.capabilities-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin: 0;
+}
+
+.close-capabilities-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-gray-500);
+    cursor: pointer;
+    padding: var(--space-1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+}
+
+.close-capabilities-btn:hover {
+    background: var(--color-gray-100);
+    color: var(--color-gray-700);
+}
+
+.capabilities-alert {
+    background: var(--color-blue-50);
+    border: 1px solid var(--color-blue-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.capabilities-alert .alert-icon {
+    color: var(--color-blue-600);
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.capabilities-alert .alert-text {
+    color: var(--color-blue-900);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    margin: 0;
+}
+
+.capability-item {
+    padding: 0;
+}
+
+.capability-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+}
+
+.capability-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin: 0;
+}
+
+.capability-try-btn {
+    background: var(--color-gray-900);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.capability-try-btn:hover {
+    background: var(--color-gray-700);
+}
+
+.capability-description {
+    font-size: var(--text-base);
+    color: var(--color-gray-700);
+    line-height: var(--leading-relaxed);
+    margin: 0 0 var(--space-4) 0;
+}
+
+.capability-examples {
+    background: var(--color-white);
+    padding: 0;
+}
+
+.examples-label {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin: 0 0 var(--space-2) 0;
+}
+
+.examples-list {
+    list-style: disc;
+    padding-left: var(--space-5);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.example-item {
+    font-size: var(--text-base);
+    color: var(--color-gray-700);
+    line-height: var(--leading-normal);
+}
+
 .response-area {
     margin-top: var(--space-6);
     background: var(--color-white);

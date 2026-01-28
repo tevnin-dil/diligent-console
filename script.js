@@ -45,6 +45,11 @@ const topHeader = document.getElementById('topHeader');
 const showAllAppsBtn = document.getElementById('showAllAppsBtn');
 const allAppsContainer = document.getElementById('allAppsContainer');
 
+// What Can I Do
+const whatCanIDoBtn = document.getElementById('whatCanIDoBtn');
+const assistCapabilities = document.getElementById('assistCapabilities');
+const closeCapabilitiesBtn = document.getElementById('closeCapabilitiesBtn');
+
 // ============================================
 // CHAT VIEW ELEMENTS
 // ============================================
@@ -135,6 +140,39 @@ showAllAppsBtn.addEventListener('click', function() {
         showAllAppsBtn.classList.add('expanded');
         showAllAppsBtn.querySelector('span').textContent = 'Hide All Apps';
     }
+});
+
+// What Can I Do toggle
+whatCanIDoBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const isVisible = assistCapabilities.style.display === 'block';
+    if (isVisible) {
+        assistCapabilities.style.display = 'none';
+    } else {
+        assistCapabilities.style.display = 'block';
+        // Hide "Show All Apps" section when showing capabilities
+        allAppsContainer.style.display = 'none';
+        showAllAppsBtn.classList.remove('expanded');
+        showAllAppsBtn.querySelector('span').textContent = 'Show All Apps';
+    }
+});
+
+// Close capabilities button
+closeCapabilitiesBtn.addEventListener('click', function() {
+    assistCapabilities.style.display = 'none';
+});
+
+// Capability Try button
+document.querySelectorAll('.capability-try-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const example = this.getAttribute('data-example');
+        
+        if (example) {
+            // Hide capabilities and transition to chat view with the example prompt
+            assistCapabilities.style.display = 'none';
+            transitionToChatView(example);
+        }
+    });
 });
 
 // Navigation rail handlers
