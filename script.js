@@ -64,32 +64,38 @@ const chatTitle = document.getElementById('chatTitle');
 const backToHeroBtn = document.getElementById('backToHeroBtn');
 const newChatBtn = document.getElementById('newChatBtn');
 const rightPanel = document.getElementById('rightPanel');
-const rightPanelToggle = document.getElementById('rightPanelToggle');
+// rightPanelToggle removed - replaced by dynamic header actions
 const closeRightPanel = document.getElementById('closeRightPanel');
 
 // Auto-resize textarea as user types
-promptInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 200) + 'px';
-});
+if (promptInput) {
+    promptInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+    });
 
-// Handle Enter key (Shift+Enter for new line)
-promptInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
+    // Handle Enter key (Shift+Enter for new line)
+    promptInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+}
 
 // Send button click
-sendBtn.addEventListener('click', sendMessage);
+if (sendBtn) {
+    sendBtn.addEventListener('click', sendMessage);
+}
 
 // Suggestion chips
 document.querySelectorAll('.suggestion-chip').forEach(chip => {
     chip.addEventListener('click', function() {
-        promptInput.value = this.textContent;
-        promptInput.focus();
-        sendMessage();
+        if (promptInput) {
+            promptInput.value = this.textContent;
+            promptInput.focus();
+            sendMessage();
+        }
     });
 });
 
@@ -130,25 +136,45 @@ document.addEventListener('click', function(e) {
 */
 
 // What Can I Do toggle
-whatCanIDoBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    const isVisible = assistCapabilities.style.display === 'block';
-    if (isVisible) {
-        assistCapabilities.style.display = 'none';
-    } else {
-        assistCapabilities.style.display = 'block';
-    }
-});
+if (whatCanIDoBtn && assistCapabilities) {
+    whatCanIDoBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const isVisible = assistCapabilities.style.display === 'block';
+        if (isVisible) {
+            assistCapabilities.style.display = 'none';
+        } else {
+            assistCapabilities.style.display = 'block';
+        }
+    });
+}
 
 // Close capabilities button
-closeCapabilitiesBtn.addEventListener('click', function() {
-    assistCapabilities.style.display = 'none';
-});
+if (closeCapabilitiesBtn && assistCapabilities) {
+    closeCapabilitiesBtn.addEventListener('click', function() {
+        assistCapabilities.style.display = 'none';
+    });
+}
 
 // View All Chats link
-viewAllChatsLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    transitionToChatView();
+if (viewAllChatsLink) {
+    viewAllChatsLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        transitionToChatView();
+    });
+}
+
+// Alert items (Attention Needed)
+document.querySelectorAll('.alert-item').forEach(item => {
+    item.addEventListener('click', function() {
+        transitionToChatView();
+    });
+});
+
+// Recent chat items
+document.querySelectorAll('.recent-chat-item').forEach(item => {
+    item.addEventListener('click', function() {
+        transitionToChatView();
+    });
 });
 
 // Capability Try button
@@ -158,22 +184,28 @@ document.querySelectorAll('.capability-try-btn').forEach(btn => {
         
         if (example) {
             // Hide capabilities and transition to chat view with the example prompt
-            assistCapabilities.style.display = 'none';
+            if (assistCapabilities) {
+                assistCapabilities.style.display = 'none';
+            }
             transitionToChatView(example);
         }
     });
 });
 
 // Navigation rail handlers
-navHome.addEventListener('click', function() {
-    transitionToHeroView();
-    updateNavRailActive('navHome');
-});
+if (navHome) {
+    navHome.addEventListener('click', function() {
+        transitionToHeroView();
+        updateNavRailActive('navHome');
+    });
+}
 
-navConsole.addEventListener('click', function() {
-    transitionToChatView();
-    updateNavRailActive('navConsole');
-});
+if (navConsole) {
+    navConsole.addEventListener('click', function() {
+        transitionToChatView();
+        updateNavRailActive('navConsole');
+    });
+}
 
 function updateNavRailActive(activeId) {
     // Remove active class from all nav items
@@ -181,7 +213,10 @@ function updateNavRailActive(activeId) {
         item.classList.remove('active');
     });
     // Add active class to selected item
-    document.getElementById(activeId).classList.add('active');
+    const activeElement = document.getElementById(activeId);
+    if (activeElement) {
+        activeElement.classList.add('active');
+    }
 }
 
 // Helper function to set prompt and send (transitions to chat view)
@@ -191,6 +226,8 @@ function setPromptAndSend(message) {
 
 // Send message function (from hero view - transitions to chat)
 function sendMessage() {
+    if (!promptInput) return;
+    
     const message = promptInput.value.trim();
     if (!message) return;
     
@@ -250,6 +287,9 @@ function transitionToHeroView() {
 // ============================================
 
 function createNewChat(initialMessage) {
+    // Hide any header actions from previous workflow
+    updateChatHeaderActions(null);
+    
     if (!initialMessage) {
         // No initial message, just show empty chat
         const chatId = 'chat-' + Date.now();
@@ -638,46 +678,52 @@ function sendChatMessage() {
 }
 
 // Auto-resize chat input
-chatInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = Math.min(this.scrollHeight, 200) + 'px';
-});
+if (chatInput) {
+    chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+    });
 
-// Handle Enter key in chat input
-chatInput.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendChatMessage();
-    }
-});
+    // Handle Enter key in chat input
+    chatInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+}
 
 // Chat send button
-chatSendBtn.addEventListener('click', sendChatMessage);
+if (chatSendBtn) {
+    chatSendBtn.addEventListener('click', sendChatMessage);
+}
 
 // ============================================
 // PANEL CONTROLS
 // ============================================
 
 // New chat
-newChatBtn.addEventListener('click', () => {
-    chatInput.focus();
-});
+if (newChatBtn && chatInput) {
+    newChatBtn.addEventListener('click', () => {
+        chatInput.focus();
+    });
+}
 
 // Chat sort control
 const chatSortSelect = document.getElementById('chatSortSelect');
-chatSortSelect.addEventListener('change', (e) => {
-    chatSortMode = e.target.value;
-    updateChatHistoryDisplay();
-});
+if (chatSortSelect) {
+    chatSortSelect.addEventListener('change', (e) => {
+        chatSortMode = e.target.value;
+        updateChatHistoryDisplay();
+    });
+}
 
-// Toggle right panel
-rightPanelToggle.addEventListener('click', () => {
-    chatView.classList.toggle('show-right-panel');
-});
-
-closeRightPanel.addEventListener('click', () => {
-    chatView.classList.remove('show-right-panel');
-});
+// Close right panel (toggle is now replaced by dynamic header actions)
+if (closeRightPanel && chatView) {
+    closeRightPanel.addEventListener('click', () => {
+        chatView.classList.remove('show-right-panel');
+    });
+}
 
 // ============================================
 // HERO VIEW HANDLERS (existing)
@@ -835,13 +881,13 @@ const mockCompanies = [
 
 const mockPeople = [
     { id: 'p1', name: 'Wei "David" Chen', title: 'Vice President, Commercial Operations (APAC)', company: 'Pacific Polymer Logistics Pte. Ltd.' },
-    { id: 'p2', name: 'Priya Nair', title: 'Regional Finance Director, APAC' },
-    { id: 'p3', name: 'James "Jim" Sterling', title: 'Senior Director, Supply Chain & Logistics' },
-    { id: 'p4', name: 'Elena Rossi', title: 'General Counsel, Asia Pacific' },
-    { id: 'p5', name: 'Lim Pei Shan', title: 'Director of Risk Management & Trade Compliance' },
-    { id: 'p6', name: 'Kenji Tanaka', title: 'Head of Digital Transformation, APAC' },
-    { id: 'p7', name: 'Siti Nurhaliza', title: 'Human Resources Director, APAC' },
-    { id: 'p8', name: 'Michael O\'Connell', title: 'Plant Manager - Jurong Island Compounding Facility' },
+    { id: 'p2', name: 'Priya Nair', title: 'Regional Finance Director, APAC', company: 'Pacific Polymer Logistics Pte. Ltd.' },
+    { id: 'p3', name: 'James "Jim" Sterling', title: 'Senior Director, Supply Chain & Logistics', company: 'Acme Feedstock & Monomer, LLC' },
+    { id: 'p4', name: 'Elena Rossi', title: 'General Counsel, Asia Pacific', company: 'VitaPlast Solutions, Ltd.' },
+    { id: 'p5', name: 'Lim Pei Shan', title: 'Director of Risk Management & Trade Compliance', company: 'Pacific Polymer Logistics Pte. Ltd.' },
+    { id: 'p6', name: 'Kenji Tanaka', title: 'Head of Digital Transformation, APAC', company: 'Pacific Polymer Logistics Pte. Ltd.' },
+    { id: 'p7', name: 'Siti Nurhaliza', title: 'Human Resources Director, APAC', company: 'Pacific Polymer Logistics Pte. Ltd.' },
+    { id: 'p8', name: 'Michael O\'Connell', title: 'Plant Manager - Jurong Island Compounding Facility', company: 'Pacific Polymer Logistics Pte. Ltd.' },
     { id: 'p9', name: 'David Chenney', title: 'Vice President, Manufacturing Operations', company: 'DuraFlow Composites, Inc.' }
 ];
 
@@ -1028,8 +1074,10 @@ function generateAppointDirectorForm(appointmentType = 'replace', savedState = {
     const preSelectedAppointee = newlyAddedPerson;
     
     // Determine which fields should be enabled
-    const directorEnabled = isReplacement && preSelectedCompany;
-    const appointeeEnabled = (!isReplacement && preSelectedCompany) || (isReplacement && preSelectedDirector);
+    // For replacement: director is enabled by default, appointee after director selected
+    // For add: company first, then appointee
+    const directorEnabled = isReplacement; // Always enabled for replacement
+    const appointeeEnabled = (isReplacement && preSelectedDirector) || (!isReplacement && preSelectedCompany);
     
     return `
         <h3 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">
@@ -1040,7 +1088,43 @@ function generateAppointDirectorForm(appointmentType = 'replace', savedState = {
         </p>
         
         <form id="appointDirectorForm" class="hybrid-form" data-appointment-type="${appointmentType}" data-saved-company="${savedState.companyId || ''}" data-saved-director="${savedState.directorId || ''}" data-newly-added="${newlyAddedPerson ? newlyAddedPerson.id : ''}">
-            <!-- Company Search -->
+            ${isReplacement ? `
+            <!-- Hidden company field for replacement workflow -->
+            <input type="hidden" id="selectedCompanyId" value="" />
+            ` : ''}
+            
+            ${isReplacement ? `
+            <!-- Director to Replace (shown first for replacement) -->
+            <div class="form-field">
+                <label class="form-label">Director to Replace</label>
+                <div class="search-field-wrapper">
+                    <input 
+                        type="text" 
+                        id="directorSearch" 
+                        class="search-input"
+                        placeholder="Search for director..."
+                        autocomplete="off"
+                        style="${preSelectedDirector ? 'display: none;' : ''}"
+                    />
+                    <div class="search-results" id="directorResults"></div>
+                    <input type="hidden" id="selectedDirectorId" value="${preSelectedDirector ? preSelectedDirector.id : ''}" />
+                </div>
+                <div class="selected-item" id="selectedDirector" style="display: ${preSelectedDirector ? 'block' : 'none'};">
+                    ${preSelectedDirector ? `
+                        <div class="selected-chip">
+                            <span>${preSelectedDirector.name}</span>
+                            <button type="button" class="remove-chip" onclick="clearSelection('selectedDirector', 'directorSearch', 'directorResults')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            ` : `
+            <!-- Company Search (only for add new director) -->
             <div class="form-field">
                 <label class="form-label">Company</label>
                 <div class="search-field-wrapper">
@@ -1069,39 +1153,7 @@ function generateAppointDirectorForm(appointmentType = 'replace', savedState = {
                     ` : ''}
                 </div>
             </div>
-
-            ${isReplacement ? `
-            <!-- Director to Replace -->
-            <div class="form-field">
-                <label class="form-label">Director to Replace</label>
-                <div class="search-field-wrapper">
-                    <input 
-                        type="text" 
-                        id="directorSearch" 
-                        class="search-input"
-                        placeholder="Search for director..."
-                        autocomplete="off"
-                        ${!directorEnabled ? 'disabled' : ''}
-                        style="${preSelectedDirector ? 'display: none;' : ''}"
-                    />
-                    <div class="search-results" id="directorResults"></div>
-                    <input type="hidden" id="selectedDirectorId" value="${preSelectedDirector ? preSelectedDirector.id : ''}" />
-                </div>
-                <div class="selected-item" id="selectedDirector" style="display: ${preSelectedDirector ? 'block' : 'none'};">
-                    ${preSelectedDirector ? `
-                        <div class="selected-chip">
-                            <span>${preSelectedDirector.name}</span>
-                            <button type="button" class="remove-chip" onclick="clearSelection('selectedDirector', 'directorSearch', 'directorResults')">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
-            ` : ''}
+            `}
 
             <!-- Appointee -->
             <div class="form-field">
@@ -1139,7 +1191,7 @@ function generateAppointDirectorForm(appointmentType = 'replace', savedState = {
 
             <div class="form-actions">
                 <button type="button" class="form-btn-secondary" id="cancelFormBtn">Cancel</button>
-                <button type="submit" class="form-btn-primary" id="submitFormBtn" ${(isReplacement && preSelectedCompany && preSelectedDirector && preSelectedAppointee) || (!isReplacement && preSelectedCompany && preSelectedAppointee) ? '' : 'disabled'}>Continue</button>
+                <button type="submit" class="form-btn-primary" id="submitFormBtn" ${(isReplacement && preSelectedDirector && preSelectedAppointee) || (!isReplacement && preSelectedCompany && preSelectedAppointee) ? '' : 'disabled'}>Continue</button>
             </div>
         </form>
     `;
@@ -1152,7 +1204,7 @@ function initializeAppointDirectorForm() {
     const form = document.getElementById('appointDirectorForm');
     const submitBtn = document.getElementById('submitFormBtn');
     
-    if (!companySearch || !form) return;
+    if (!form) return;
     
     const appointmentType = form.getAttribute('data-appointment-type');
     const isReplacement = appointmentType === 'replace';
@@ -1160,37 +1212,36 @@ function initializeAppointDirectorForm() {
     const savedDirectorId = form.getAttribute('data-saved-director');
     const newlyAddedId = form.getAttribute('data-newly-added');
 
-    // Company search
-    setupSearchField(
-        companySearch,
-        document.getElementById('companyResults'),
-        mockCompanies,
-        (item) => `
-            <div style="display: flex; align-items: center; gap: var(--space-2);">
-                <span style="font-size: var(--text-lg);">${item.flag}</span>
-                <div style="flex: 1;">
-                    <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
-                    <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.location}, ${item.country}</div>
+    // Company search (only for "add" workflow)
+    if (!isReplacement && companySearch) {
+        setupSearchField(
+            companySearch,
+            document.getElementById('companyResults'),
+            mockCompanies,
+            (item) => `
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <span style="font-size: var(--text-lg);">${item.flag}</span>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
+                        <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.location}, ${item.country}</div>
+                    </div>
                 </div>
-            </div>
-        `,
-        (item) => {
-            document.getElementById('selectedCompanyId').value = item.id;
-            showSelectedItem('selectedCompany', `${item.flag} ${item.name}`, 'companySearch', 'companyResults');
-            
-            // Enable next field based on appointment type
-            if (isReplacement && directorSearch) {
-                directorSearch.disabled = false;
-                directorSearch.focus();
-            } else if (!isReplacement && appointeeSearch) {
-                appointeeSearch.disabled = false;
-                appointeeSearch.focus();
+            `,
+            (item) => {
+                document.getElementById('selectedCompanyId').value = item.id;
+                showSelectedItem('selectedCompany', `${item.flag} ${item.name}`, 'companySearch', 'companyResults');
+                
+                // Enable appointee search
+                if (appointeeSearch) {
+                    appointeeSearch.disabled = false;
+                    appointeeSearch.focus();
+                }
+                checkFormCompletion();
             }
-            checkFormCompletion();
-        }
-    );
+        );
+    }
 
-    // Director search (only if replacement)
+    // Director search (only for replacement workflow)
     if (isReplacement && directorSearch) {
         setupSearchField(
             directorSearch,
@@ -1200,14 +1251,17 @@ function initializeAppointDirectorForm() {
                 <div style="display: flex; flex-direction: column; gap: 2px;">
                     <div style="font-weight: 500; color: var(--color-gray-900);">${item.name}</div>
                     <div style="font-size: var(--text-xs); color: var(--color-gray-500);">${item.title}</div>
+                    ${item.company ? `<div style="font-size: var(--text-xs); color: var(--color-gray-400);">${item.company}</div>` : ''}
                 </div>
             `,
             (item) => {
                 document.getElementById('selectedDirectorId').value = item.id;
                 showSelectedItem('selectedDirector', item.name, 'directorSearch', 'directorResults');
                 // Enable appointee search
-                appointeeSearch.disabled = false;
-                appointeeSearch.focus();
+                if (appointeeSearch) {
+                    appointeeSearch.disabled = false;
+                    appointeeSearch.focus();
+                }
                 checkFormCompletion();
             }
         );
@@ -1245,13 +1299,13 @@ function initializeAppointDirectorForm() {
     });
 
     function checkFormCompletion() {
-        const companyId = document.getElementById('selectedCompanyId').value;
         const appointeeId = document.getElementById('selectedAppointeeId').value;
         
         if (isReplacement) {
             const directorId = document.getElementById('selectedDirectorId').value;
-            submitBtn.disabled = !(companyId && directorId && appointeeId);
+            submitBtn.disabled = !(directorId && appointeeId);
         } else {
+            const companyId = document.getElementById('selectedCompanyId').value;
             submitBtn.disabled = !(companyId && appointeeId);
         }
     }
@@ -1499,17 +1553,28 @@ function handleAppointDirectorFormSubmit() {
     const appointmentType = form.getAttribute('data-appointment-type');
     const isReplacement = appointmentType === 'replace';
     
-    const companyId = document.getElementById('selectedCompanyId').value;
     const appointeeId = document.getElementById('selectedAppointeeId').value;
-    
-    const company = mockCompanies.find(c => c.id === companyId);
     const appointee = mockAppointees.find(a => a.id === appointeeId);
     
     let director = null;
+    let company = null;
+    
     if (isReplacement) {
         const directorId = document.getElementById('selectedDirectorId').value;
         director = mockDirectors.find(d => d.id === directorId);
         if (!director) return;
+        
+        // Derive company from director's company property or default to Pacific Polymer Logistics
+        if (director.company) {
+            company = mockCompanies.find(c => c.name === director.company);
+        }
+        // Default to Pacific Polymer Logistics if no company found
+        if (!company) {
+            company = mockCompanies[4]; // Pacific Polymer Logistics Pte. Ltd.
+        }
+    } else {
+        const companyId = document.getElementById('selectedCompanyId').value;
+        company = mockCompanies.find(c => c.id === companyId);
     }
     
     if (!company || !appointee) return;
@@ -1556,6 +1621,13 @@ function handleAppointDirectorFormSubmit() {
 }
 
 function openAppointmentPanel() {
+    // Reset workflow state
+    window.appointmentWorkflowState = {
+        approversSelected: false,
+        documentsReviewed: false,
+        selectedApprovers: []
+    };
+    
     // Show the right panel
     chatView.classList.add('show-right-panel');
     
@@ -1570,8 +1642,85 @@ function openAppointmentPanel() {
     const panelContent = document.querySelector('.right-panel-content');
     panelContent.innerHTML = generateAppointmentPanelContent();
     
+    // Show Preview button in header
+    updateChatHeaderActions('preview');
+    
     // Initialize panel interactions
     setTimeout(() => initializeAppointmentPanel(), 100);
+}
+
+// Update chat header actions based on workflow state
+function updateChatHeaderActions(state) {
+    const actionsContainer = document.getElementById('chatHeaderActions');
+    if (!actionsContainer) return;
+    
+    if (state === 'preview') {
+        // Show Preview button
+        actionsContainer.innerHTML = `
+            <button class="header-preview-btn" onclick="reopenPreviewPanel()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-1);">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+                Preview
+            </button>
+        `;
+        actionsContainer.style.display = 'flex';
+    } else if (state === 'preview-ready') {
+        // Show Preview button with Ready tag
+        actionsContainer.innerHTML = `
+            <button class="header-preview-btn" onclick="reopenPreviewPanel()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-1);">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+                Preview
+            </button>
+            <span class="workflow-ready-tag">Ready</span>
+        `;
+        actionsContainer.style.display = 'flex';
+    } else if (state === 'process-running') {
+        // Show View Status button with Running indicator
+        actionsContainer.innerHTML = `
+            <button class="header-status-btn" onclick="reopenStatusPanel()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-1);">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+                View Status
+            </button>
+            <span class="workflow-running-tag">
+                <span class="running-dot"></span>
+                Running
+            </span>
+        `;
+        actionsContainer.style.display = 'flex';
+    } else {
+        // Hide header actions
+        actionsContainer.style.display = 'none';
+    }
+}
+
+// Reopen preview panel
+function reopenPreviewPanel() {
+    // Show the right panel
+    chatView.classList.add('show-right-panel');
+    
+    // If we're not already showing the appointment panel, regenerate it
+    if (currentPanelType !== 'appointment') {
+        currentPanelType = 'appointment';
+        const { isReplacement } = window.selectedAppointment || {};
+        document.querySelector('.right-panel-title').textContent = isReplacement ? 'Replace Director' : 'Add Director';
+        const panelContent = document.querySelector('.right-panel-content');
+        panelContent.innerHTML = generateAppointmentPanelContent();
+    }
+}
+
+// Reopen status panel
+function reopenStatusPanel() {
+    if (currentPanelType === 'process' || currentPanelType === 'completion') {
+        chatView.classList.add('show-right-panel');
+    }
 }
 
 function generateAppointmentPanelContent() {
@@ -1579,6 +1728,15 @@ function generateAppointmentPanelContent() {
     
     if (!company || !appointee) {
         return '<p>Error: Appointment data not found</p>';
+    }
+    
+    // Initialize workflow state if not exists
+    if (!window.appointmentWorkflowState) {
+        window.appointmentWorkflowState = {
+            approversSelected: false,
+            documentsReviewed: false,
+            selectedApprovers: []
+        };
     }
     
     return `
@@ -1614,138 +1772,22 @@ function generateAppointmentPanelContent() {
                 </div>
             </section>
 
-            <!-- Approvers Section -->
-            <section class="panel-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-3);">
-                    <h4 class="panel-section-title" style="margin: 0; flex: 1;">Approvers</h4>
-                    <button class="panel-btn-secondary" onclick="editApproversList()" style="font-size: var(--text-sm); padding: var(--space-2) var(--space-3); flex-shrink: 0; white-space: nowrap;">
-                        Edit List
-                    </button>
+            <!-- Approvers Section (placeholder) -->
+            <section class="panel-section" id="approversSection">
+                <h4 class="panel-section-title">Approvers</h4>
+                <div class="empty-state" id="approversEmptyState" style="padding: var(--space-4); text-align: center; color: var(--color-gray-500); font-size: var(--text-sm);">
+                    Awaiting approver selection...
                 </div>
-                
-                <div class="approvers-list">
-                    <div class="approver-item">
-                        <div class="approver-avatar">RJ</div>
-                        <div class="approver-info">
-                            <div class="approver-name">Robert Johnson</div>
-                            <div class="approver-role">Board Chair</div>
-                        </div>
-                    </div>
-                    
-                    <div class="approver-item">
-                        <div class="approver-avatar">MS</div>
-                        <div class="approver-info">
-                            <div class="approver-name">Margaret Sullivan</div>
-                            <div class="approver-role">Chief Executive Officer</div>
-                        </div>
-                    </div>
-                    
-                    <div class="approver-item">
-                        <div class="approver-avatar">JD</div>
-                        <div class="approver-info">
-                            <div class="approver-name">James Davidson</div>
-                            <div class="approver-role">Lead Independent Director</div>
-                        </div>
-                    </div>
-                    
-                    <div class="approver-item">
-                        <div class="approver-avatar">LW</div>
-                        <div class="approver-info">
-                            <div class="approver-name">Linda Williams</div>
-                            <div class="approver-role">Audit Committee Chair</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="approvers-list" id="approversList" style="display: none;"></div>
             </section>
 
-            <!-- Documents Section -->
-            <section class="panel-section">
+            <!-- Documents Section (placeholder) -->
+            <section class="panel-section" id="documentsSection">
                 <h4 class="panel-section-title">Required Documents</h4>
-                
-                <div class="document-list">
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                        </div>
-                        <div class="document-info">
-                            <div class="document-name">Board Resolution</div>
-                            <div class="document-meta">For board approval via Boards system</div>
-                        </div>
-                        <button class="document-action" onclick="previewDocument('board-resolution')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
-                        <button class="document-action" onclick="downloadDocument('board-resolution')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                            </svg>
-                        </div>
-                        <div class="document-info">
-                            <div class="document-name">Consent to Act as Director</div>
-                            <div class="document-meta">For ${appointee.name} signature</div>
-                        </div>
-                        <button class="document-action" onclick="previewDocument('consent-form')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
-                        <button class="document-action" onclick="downloadDocument('consent-form')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                    <div class="document-item">
-                        <div class="document-icon">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                            </svg>
-                        </div>
-                        <div class="document-info">
-                            <div class="document-name">Regulatory Filing Form</div>
-                            <div class="document-meta">Government filing for ${company.location}, ${company.country}</div>
-                        </div>
-                        <button class="document-action" onclick="previewDocument('regulatory-form')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
-                        <button class="document-action" onclick="downloadDocument('regulatory-form')">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                        </button>
-                    </div>
+                <div class="empty-state" id="documentsEmptyState" style="padding: var(--space-4); text-align: center; color: var(--color-gray-500); font-size: var(--text-sm);">
+                    Awaiting document review...
                 </div>
+                <div class="document-list" id="documentsList" style="display: none;"></div>
             </section>
 
             <!-- Workflow Section -->
@@ -1799,9 +1841,8 @@ function generateAppointmentPanelContent() {
             </section>
 
             <!-- Action Section -->
-            <section class="panel-section panel-actions">
+            <section class="panel-section panel-actions" id="panelActions">
                 <button class="panel-btn-secondary" onclick="closeAppointmentPanel()">Cancel</button>
-                <button class="panel-btn-primary" onclick="startAppointmentWorkflow()">Start Process</button>
             </section>
         </div>
     `;
@@ -1809,7 +1850,318 @@ function generateAppointmentPanelContent() {
 
 function initializeAppointmentPanel() {
     // Panel is already interactive via onclick handlers
-    // Could add additional initialization here if needed
+    // After panel opens, prompt for approver selection
+    setTimeout(() => {
+        if (currentChatId) {
+            addMessageToChat(currentChatId, 'assistant', generateApproverSelectionUI());
+        }
+    }, 500);
+}
+
+// Generate approver selection UI in chat
+function generateApproverSelectionUI() {
+    return `
+        <h4 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Select Approvers</h4>
+        <p style="margin-bottom: var(--space-4); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            Please select the board members who need to approve this director appointment:
+        </p>
+        
+        <form id="approverSelectionForm" style="background: var(--color-gray-50); padding: var(--space-4); border-radius: var(--radius-lg); margin-bottom: var(--space-3);">
+            <div style="display: flex; flex-direction: column; gap: var(--space-3);">
+                <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer;">
+                    <input type="checkbox" name="approver" value="robert-johnson" data-name="Robert Johnson" data-initials="RJ" data-role="Board Chair" style="cursor: pointer;">
+                    <span style="flex: 1; font-size: var(--text-sm); color: var(--color-gray-900);">
+                        <strong>Robert Johnson</strong> &mdash; Board Chair
+                    </span>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer;">
+                    <input type="checkbox" name="approver" value="margaret-sullivan" data-name="Margaret Sullivan" data-initials="MS" data-role="Chief Executive Officer" style="cursor: pointer;">
+                    <span style="flex: 1; font-size: var(--text-sm); color: var(--color-gray-900);">
+                        <strong>Margaret Sullivan</strong> &mdash; Chief Executive Officer
+                    </span>
+                </label>
+                
+                <div style="display: flex; flex-direction: column; gap: var(--space-1);">
+                    <label style="display: flex; align-items: center; gap: var(--space-2); cursor: not-allowed; opacity: 0.5;">
+                        <input type="checkbox" name="approver" value="james-davidson" data-name="James Davidson" data-initials="JD" data-role="Lead Independent Director" disabled style="cursor: not-allowed;">
+                        <span style="flex: 1; font-size: var(--text-sm); color: var(--color-gray-600);">
+                            <strong>James Davidson</strong> &mdash; Lead Independent Director
+                        </span>
+                    </label>
+                    <div style="margin-left: var(--space-6); font-size: var(--text-xs); color: var(--color-gray-500); font-style: italic;">
+                        Missing a saved signature template
+                    </div>
+                </div>
+                
+                <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer;">
+                    <input type="checkbox" name="approver" value="linda-williams" data-name="Linda Williams" data-initials="LW" data-role="Audit Committee Chair" style="cursor: pointer;">
+                    <span style="flex: 1; font-size: var(--text-sm); color: var(--color-gray-900);">
+                        <strong>Linda Williams</strong> &mdash; Audit Committee Chair
+                    </span>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: var(--space-2); cursor: pointer;">
+                    <input type="checkbox" name="approver" value="david-martinez" data-name="David Martinez" data-initials="DM" data-role="Compensation Committee Chair" style="cursor: pointer;">
+                    <span style="flex: 1; font-size: var(--text-sm); color: var(--color-gray-900);">
+                        <strong>David Martinez</strong> &mdash; Compensation Committee Chair
+                    </span>
+                </label>
+            </div>
+            
+            <button type="button" class="panel-btn-primary" onclick="confirmApprovers()" style="margin-top: var(--space-4); width: 100%;">
+                Confirm Approvers
+            </button>
+        </form>
+    `;
+}
+
+// Handle approver confirmation
+function confirmApprovers() {
+    const form = document.getElementById('approverSelectionForm');
+    if (!form) return;
+    
+    const checkboxes = form.querySelectorAll('input[name="approver"]:checked');
+    const selectedApprovers = Array.from(checkboxes).map(cb => ({
+        name: cb.dataset.name,
+        initials: cb.dataset.initials,
+        role: cb.dataset.role
+    }));
+    
+    if (selectedApprovers.length === 0) {
+        if (currentChatId) {
+            addMessageToChat(currentChatId, 'assistant', 
+                '<p style="color: var(--color-gray-700);">Please select at least one approver.</p>'
+            );
+        }
+        return;
+    }
+    
+    // Store selected approvers
+    window.appointmentWorkflowState.selectedApprovers = selectedApprovers;
+    
+    // Add to preview panel
+    addApproversToPanel(selectedApprovers);
+    
+    // Acknowledge in chat
+    if (currentChatId) {
+        const approverNames = selectedApprovers.map(a => a.name).join(', ');
+        addMessageToChat(currentChatId, 'assistant', 
+            `<p style="color: var(--color-gray-700); margin-bottom: var(--space-3);">
+                <strong>${selectedApprovers.length} approver${selectedApprovers.length > 1 ? 's' : ''} confirmed:</strong> ${approverNames}
+            </p>`
+        );
+        
+        // Add documents to panel and prompt for review
+        setTimeout(() => {
+            addDocumentsToPanel();
+            addMessageToChat(currentChatId, 'assistant', generateDocumentReviewUI());
+        }, 500);
+    }
+}
+
+// Generate document review UI in chat
+function generateDocumentReviewUI() {
+    const { company } = window.selectedAppointment || {};
+    const regulatoryFormName = company && company.location === 'Singapore' ? 'Form 45' : 'Regulatory Filing Form';
+    
+    return `
+        <h4 style="margin-bottom: var(--space-3); color: var(--color-gray-900);">Review Documents</h4>
+        <p style="margin-bottom: var(--space-4); line-height: var(--leading-normal); color: var(--color-gray-700);">
+            Please review the documents that will be used in this appointment process. These documents have been added to the preview panel on the right.
+        </p>
+        
+        <div style="background: var(--color-gray-50); padding: var(--space-4); border-radius: var(--radius-lg); margin-bottom: var(--space-3);">
+            <ul style="list-style: none; padding: 0; margin: 0 0 var(--space-4) 0; display: flex; flex-direction: column; gap: var(--space-2);">
+                <li style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-gray-700);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>Board Resolution</span>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-gray-700);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>Consent to Act as Director</span>
+                </li>
+                <li style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-gray-700);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <span>${regulatoryFormName}</span>
+                </li>
+            </ul>
+            
+            <button type="button" class="panel-btn-primary" onclick="confirmDocumentsReviewed()" style="width: 100%;">
+                I've Reviewed the Documents
+            </button>
+        </div>
+    `;
+}
+
+// Handle document review confirmation
+function confirmDocumentsReviewed() {
+    // Mark documents as reviewed
+    window.appointmentWorkflowState.documentsReviewed = true;
+    
+    // Enable Start Process button if both conditions are met
+    updateStartProcessButton();
+    
+    // Acknowledge in chat
+    if (currentChatId) {
+        addMessageToChat(currentChatId, 'assistant', 
+            `<p style="color: var(--color-gray-700); margin-bottom: var(--space-3);">
+                <strong>Documents confirmed.</strong> You're now ready to start the appointment process. Click "Start Process" in the preview panel when you're ready to proceed.
+            </p>`
+        );
+    }
+}
+
+// New function to add approvers section to panel
+function addApproversToPanel(approvers) {
+    const emptyState = document.getElementById('approversEmptyState');
+    const approversList = document.getElementById('approversList');
+    if (!emptyState || !approversList) return;
+    
+    // Hide empty state
+    emptyState.style.display = 'none';
+    
+    // Populate and show approvers list
+    approversList.innerHTML = approvers.map(approver => `
+        <div class="approver-item">
+            <div class="approver-avatar">${approver.initials}</div>
+            <div class="approver-info">
+                <div class="approver-name">${approver.name}</div>
+                <div class="approver-role">${approver.role}</div>
+            </div>
+        </div>
+    `).join('');
+    approversList.style.display = 'block';
+    
+    window.appointmentWorkflowState.approversSelected = true;
+    
+    // Check if we should enable Start Process button
+    updateStartProcessButton();
+}
+
+// New function to add documents section to panel
+function addDocumentsToPanel() {
+    const { appointee, company } = window.selectedAppointment || {};
+    const emptyState = document.getElementById('documentsEmptyState');
+    const documentsList = document.getElementById('documentsList');
+    if (!emptyState || !documentsList) return;
+    
+    // Hide empty state
+    emptyState.style.display = 'none';
+    
+    // Populate and show documents list
+    documentsList.innerHTML = `
+        <div class="document-item">
+            <div class="document-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <div class="document-info">
+                <div class="document-name">Board Resolution</div>
+                <div class="document-meta">For board approval via Boards system</div>
+            </div>
+            <button class="document-action" onclick="previewDocument('board-resolution')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+            <button class="document-action" onclick="downloadDocument('board-resolution')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="document-item">
+            <div class="document-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+            </div>
+            <div class="document-info">
+                <div class="document-name">Consent to Act as Director</div>
+                <div class="document-meta">For ${appointee.name} signature</div>
+            </div>
+            <button class="document-action" onclick="previewDocument('consent-form')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+            <button class="document-action" onclick="downloadDocument('consent-form')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="document-item">
+            <div class="document-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <div class="document-info">
+                <div class="document-name">${company && company.location === 'Singapore' ? 'Form 45' : 'Regulatory Filing Form'}</div>
+                <div class="document-meta">Government filing for ${company.location}, ${company.country}</div>
+            </div>
+            <button class="document-action" onclick="previewDocument('regulatory-form')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+            <button class="document-action" onclick="downloadDocument('regulatory-form')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+            </button>
+        </div>
+    `;
+    documentsList.style.display = 'block';
+}
+
+// Update Start Process button visibility
+function updateStartProcessButton() {
+    const actionsSection = document.getElementById('panelActions');
+    if (!actionsSection) return;
+    
+    const state = window.appointmentWorkflowState || {};
+    
+    if (state.approversSelected && state.documentsReviewed) {
+        actionsSection.innerHTML = `
+            <button class="panel-btn-secondary" onclick="closeAppointmentPanel()">Cancel</button>
+            <button class="panel-btn-primary" onclick="startAppointmentWorkflow()">Start Process</button>
+        `;
+        
+        // Update header to show "Ready" tag
+        updateChatHeaderActions('preview-ready');
+    }
 }
 
 function previewDocument(docId) {
@@ -1822,6 +2174,13 @@ function downloadDocument(docId) {
 
 function closeAppointmentPanel() {
     chatView.classList.remove('show-right-panel');
+    
+    // Reset workflow state
+    window.appointmentWorkflowState = null;
+    
+    // Hide header actions
+    updateChatHeaderActions(null);
+    
     if (currentChatId) {
         addMessageToChat(currentChatId, 'assistant', 
             'Appointment process cancelled. Let me know if you need anything else.'
@@ -1829,13 +2188,7 @@ function closeAppointmentPanel() {
     }
 }
 
-function editApproversList() {
-    if (currentChatId) {
-        addMessageToChat(currentChatId, 'assistant', 
-            'The approvers list editor would open here. You could add, remove, or reorder board members who need to approve this director appointment.'
-        );
-    }
-}
+// Removed: editApproversList - no longer needed with new workflow
 
 // ============================================
 // CONVERSATIONAL DIRECTOR REPLACEMENT FLOW
@@ -1925,7 +2278,7 @@ function generateAppointeeSearchForReplacement(directorId) {
                 onclick="continueToPreviewPanel()"
                 disabled
                 style="opacity: 0.5; cursor: not-allowed;">
-                Continue to Preview
+                Continue
             </button>
         </div>
     `;
@@ -2085,6 +2438,9 @@ function startAppointmentWorkflow() {
     // Open the In-Progress status panel
     openInProgressPanel();
     
+    // Update header to show View Status button with Running indicator
+    updateChatHeaderActions('process-running');
+    
     // Add a message to the chat with button to reopen panel
     if (currentChatId) {
         addMessageToChat(currentChatId, 'assistant', 
@@ -2127,53 +2483,8 @@ function openInProgressPanel() {
 }
 
 function generateInProgressPanel() {
-    const runningBadge = processPaused 
-        ? '<span class="status-badge status-paused">Paused</span>'
-        : '<span class="status-badge status-running"><span class="pulse-dot"></span>Running</span>';
-    
     return `
         <div class="in-progress-panel">
-            <!-- Header with Status -->
-            <section class="panel-section">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3);">
-                    <div>
-                        <h4 class="panel-section-title" style="margin-bottom: var(--space-1);">Director Appointment</h4>
-                        ${runningBadge}
-                    </div>
-                    <div style="display: flex; gap: var(--space-2);">
-                        ${processPaused 
-                            ? `<button class="panel-btn-danger" onclick="cancelProcess()">Cancel Process</button>
-                               <button class="panel-btn-primary" onclick="toggleProcessPause()">Resume</button>`
-                            : `<button class="panel-btn-secondary" onclick="toggleProcessPause()">Pause</button>`
-                        }
-                    </div>
-                </div>
-            </section>
-
-            <!-- Context Summary -->
-            <section class="panel-section">
-                <h4 class="panel-section-title">Appointment Details</h4>
-                
-                <div class="summary-card-compact">
-                    <div class="summary-item-compact">
-                        <label class="summary-label">Company</label>
-                        <div class="summary-value">${currentAppointment.company}</div>
-                    </div>
-                    
-                    ${currentAppointment.resigningDirector ? `
-                    <div class="summary-item-compact">
-                        <label class="summary-label">Resigning Director</label>
-                        <div class="summary-value">${currentAppointment.resigningDirector}</div>
-                    </div>
-                    ` : ''}
-                    
-                    <div class="summary-item-compact">
-                        <label class="summary-label">${currentAppointment.isReplacement ? 'Appointee' : 'New Director'}</label>
-                        <div class="summary-value">${currentAppointment.appointee}</div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Workflow Progress -->
             <section class="panel-section" style="flex: 1; overflow-y: auto;">
                 <h4 class="panel-section-title">Workflow Progress</h4>
@@ -2182,26 +2493,6 @@ function generateInProgressPanel() {
                     ${processSteps.map((step, stepIdx) => generateStepHTML(step, stepIdx)).join('')}
                 </div>
             </section>
-
-            ${processPaused ? `
-                <section class="panel-section" style="background: var(--color-gray-50); border-top: 1px solid var(--color-gray-200);">
-                    <div style="display: flex; align-items: center; gap: var(--space-3);">
-                        <div style="color: var(--color-gray-600);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="10" y1="15" x2="10" y2="9"></line>
-                                <line x1="14" y1="15" x2="14" y2="9"></line>
-                            </svg>
-                        </div>
-                        <div>
-                            <p style="font-weight: 600; color: var(--color-gray-900); margin-bottom: var(--space-1);">Process Paused</p>
-                            <p style="font-size: var(--text-sm); color: var(--color-gray-600);">
-                                The workflow has been paused. You can resume to continue or cancel to stop entirely.
-                            </p>
-                        </div>
-                    </div>
-                </section>
-            ` : ''}
         </div>
     `;
 }
