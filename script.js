@@ -1801,7 +1801,7 @@ function generateAppointmentPanelContent() {
                     <div class="workflow-step">
                         <div class="workflow-step-number">1</div>
                         <div class="workflow-step-content">
-                            <div class="workflow-step-title">Create Board Approval</div>
+                            <div class="workflow-step-title">Board Approval</div>
                             <div class="workflow-step-description">
                                 Submit Board Resolution to the <strong>Boards</strong> system for asynchronous approval by board members.
                             </div>
@@ -1813,23 +1813,13 @@ function generateAppointmentPanelContent() {
                         <div class="workflow-step-content">
                             <div class="workflow-step-title">Email Regulatory Forms</div>
                             <div class="workflow-step-description">
-                                Send Consent to Act and regulatory forms to <strong>${appointee.name}</strong> for signature. Monitor inbox for signed documents.
+                                Send Consent to Act and regulatory forms to <strong>${appointee.name}</strong> for signature. Monitor inbox for signed documents. You will need to file ${company.location === 'Singapore' ? '<strong>Form 45</strong>' : 'the required forms'} with the ${company.location}, ${company.country} regulatory agency after receiving signed documents.
                             </div>
                         </div>
                     </div>
                     
                     <div class="workflow-step">
                         <div class="workflow-step-number">3</div>
-                        <div class="workflow-step-content">
-                            <div class="workflow-step-title">Submit Regulatory Filing</div>
-                            <div class="workflow-step-description">
-                                Prepare and file ${company.location === 'Singapore' ? '<strong>Form 45</strong>' : 'required forms'} with the ${company.location}, ${company.country} regulatory agency.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-step">
-                        <div class="workflow-step-number">4</div>
                         <div class="workflow-step-content">
                             <div class="workflow-step-title">Update Entity Records</div>
                             <div class="workflow-step-description">
@@ -2388,19 +2378,43 @@ function startAppointmentWorkflow() {
     }
     entitySubsteps.push({ id: 'entity-appoint', name: `Record ${appointee.name} appointment`, status: 'pending', time: null });
     
+    // Get selected approvers from workflow state (in the order they were selected)
+    const selectedApprovers = window.appointmentWorkflowState?.selectedApprovers || [];
+    
+    // Map to full approver objects with IDs (keep display order from chat)
+    const approverIdMap = {
+        'Robert Johnson': 'approval-johnson',
+        'Margaret Sullivan': 'approval-sullivan',
+        'James Davidson': 'approval-davidson',
+        'Linda Williams': 'approval-williams',
+        'David Martinez': 'approval-martinez'
+    };
+    
+    const approvers = selectedApprovers.map(a => ({
+        id: approverIdMap[a.name] || a.name.toLowerCase().replace(/\s+/g, '-'),
+        name: a.name,
+        title: a.role,
+        status: 'pending',
+        time: null,
+        vote: null
+    }));
+    
     // Initialize workflow steps with sub-statuses
     processSteps = [
         {
             id: 'board-approval',
-            name: 'Create Board Approval',
+            name: 'Board Approval',
             description: 'Submit Board Resolution to the Boards system for asynchronous approval',
             substeps: [
                 { id: 'approval-create', name: 'Create approval request', status: 'completed', time: 'Jan 7, 9:00 AM' },
                 { id: 'approval-send', name: 'Send to board members', status: 'in_progress', time: null },
-                { id: 'approval-johnson', name: 'Robert Johnson - Board Chair', status: 'pending', time: null, vote: null },
-                { id: 'approval-sullivan', name: 'Margaret Sullivan - CEO', status: 'pending', time: null, vote: null },
-                { id: 'approval-davidson', name: 'James Davidson - Lead Independent Director', status: 'pending', time: null, vote: null },
-                { id: 'approval-williams', name: 'Linda Williams - Audit Committee Chair', status: 'pending', time: null, vote: null },
+                { 
+                    id: 'approval', 
+                    name: 'Approval', 
+                    status: 'pending', 
+                    time: null,
+                    approvers: approvers // Nested approvers array
+                },
                 { id: 'approval-store', name: 'Store signed Board Resolution', status: 'pending', time: null, docLink: 'board-resolution-signed' }
             ]
         },
@@ -2413,18 +2427,8 @@ function startAppointmentWorkflow() {
                 { id: 'forms-send', name: `Email forms to ${appointee.name}`, status: 'pending', time: null },
                 { id: 'forms-receive', name: 'Receive signed documents', status: 'pending', time: null },
                 { id: 'forms-validate', name: 'Validate form completeness', status: 'pending', time: null },
-                { id: 'forms-store', name: 'Store Consent to Act form', status: 'pending', time: null, docLink: 'consent-form-signed' }
-            ]
-        },
-        {
-            id: 'regulatory-filing',
-            name: 'Submit Regulatory Filing',
-            description: `File ${company.location === 'Singapore' ? 'Form 45' : 'required forms'} with regulatory agency`,
-            substeps: [
-                { id: 'filing-prepare', name: `Prepare ${company.location === 'Singapore' ? 'Form 45' : 'regulatory filing'}`, status: 'pending', time: null },
-                { id: 'filing-submit', name: 'Submit to regulatory agency', status: 'pending', time: null },
-                { id: 'filing-confirm', name: 'Receive filing confirmation', status: 'pending', time: null },
-                { id: 'filing-store', name: 'Store filed documents', status: 'pending', time: null, docLink: 'regulatory-filing' }
+                { id: 'forms-store-consent', name: 'Store Consent to Act form', status: 'pending', time: null, docLink: 'consent-form-signed' },
+                { id: 'forms-store-regulatory', name: `Store signed ${company.location === 'Singapore' ? 'Form 45' : 'regulatory form'}`, status: 'pending', time: null, docLink: 'regulatory-form-signed', isManualFiling: true }
             ]
         },
         {
@@ -2518,28 +2522,76 @@ function generateStepHTML(step, stepIdx) {
             </div>
             
             <div class="process-substeps">
-                ${step.substeps.map(substep => `
-                    <div class="process-substep ${substep.status}">
-                        <div class="substep-indicator">
-                            ${getStatusIcon(substep.status)}
-                        </div>
-                        <div class="substep-content">
-                            <div class="substep-name">${substep.name}${substep.vote ? ` • <span style="color: #10b981; font-weight: 600;">${substep.vote}</span>` : ''}</div>
-                            ${substep.status === 'in_progress' 
-                                ? '<div class="substep-meta">In progress...</div>'
-                                : substep.time 
-                                    ? `<div class="substep-meta">
-                                        ${substep.vote ? 'Responded' : 'Completed'} ${substep.time}
-                                        ${substep.docLink && substep.status === 'completed' 
-                                            ? ` • <a href="#" onclick="event.preventDefault(); openDocumentFromWorkflow('${substep.docLink}');" style="color: var(--color-gray-900); font-weight: 500; text-decoration: underline;">Open document</a>`
-                                            : ''
-                                        }
+                ${step.substeps.map(substep => {
+                    // Check if this substep has nested approvers
+                    if (substep.approvers) {
+                        return `
+                            <div class="process-substep ${substep.status}">
+                                <div class="substep-indicator">
+                                    ${getStatusIcon(substep.status)}
+                                </div>
+                                <div class="substep-content">
+                                    <div class="substep-name">${substep.name}</div>
+                                    <div class="approvers-list" style="margin-top: var(--space-2); padding-left: var(--space-4);">
+                                        ${substep.approvers.map(approver => `
+                                            <div style="display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) 0; font-size: var(--text-sm); color: var(--color-gray-700);">
+                                                <span style="flex: 1;">${approver.name} - ${approver.title}</span>
+                                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                                    ${approver.vote 
+                                                        ? `<span style="color: #10b981; font-weight: 600; font-size: var(--text-xs);">${approver.vote}</span>` 
+                                                        : ''
+                                                    }
+                                                    ${approver.time && approver.vote
+                                                        ? `<span style="color: var(--color-gray-500); font-size: var(--text-xs); white-space: nowrap;">${approver.time}</span>`
+                                                        : ''
+                                                    }
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                    ${substep.status === 'completed' && substep.time
+                                        ? `<div class="substep-meta" style="margin-top: var(--space-2);">All approvals received ${substep.time}</div>`
+                                        : ''
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Regular substep rendering
+                    return `
+                        <div class="process-substep ${substep.status}">
+                            <div class="substep-indicator">
+                                ${getStatusIcon(substep.status)}
+                            </div>
+                            <div class="substep-content">
+                                <div class="substep-name">${substep.name}${substep.vote ? ` • <span style="color: #10b981; font-weight: 600;">${substep.vote}</span>` : ''}</div>
+                                ${substep.status === 'in_progress' 
+                                    ? '<div class="substep-meta">In progress...</div>'
+                                    : substep.time 
+                                        ? `<div class="substep-meta">
+                                            ${substep.vote ? 'Responded' : 'Completed'} ${substep.time}
+                                            ${substep.docLink && substep.status === 'completed' 
+                                                ? ` • <a href="#" onclick="event.preventDefault(); openDocumentFromWorkflow('${substep.docLink}');" style="color: var(--color-gray-900); font-weight: 500; text-decoration: underline;">Open document</a>`
+                                                : ''
+                                            }
+                                            ${substep.isManualFiling && substep.status === 'completed'
+                                                ? ` • <a href="#" onclick="event.preventDefault(); downloadDocument('${substep.docLink}');" style="color: var(--color-gray-900); font-weight: 500; text-decoration: underline;">Download</a>`
+                                                : ''
+                                            }
+                                           </div>`
+                                        : ''
+                                }
+                                ${substep.isManualFiling && substep.status === 'completed'
+                                    ? `<div style="margin-top: var(--space-1); font-size: var(--text-xs); color: var(--color-gray-600); font-style: italic;">
+                                        Manual filing required with regulatory agency
                                        </div>`
                                     : ''
-                            }
+                                }
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         </div>
     `;
@@ -2612,31 +2664,69 @@ function simulateLiveUpdates() {
     if (!processRunning || processPaused) return;
     
     // Timeline spanning 5 business days (Jan 7-13, 2025, skipping weekend)
+    // Get approvers from processSteps
+    const approvalStep = processSteps.find(s => s.id === 'board-approval');
+    const approvalSubstep = approvalStep.substeps.find(s => s.id === 'approval');
+    const approvers = approvalSubstep.approvers;
+    
+    // Create timeline with approval times (will be randomized)
+    const approvalTimes = [
+        'Jan 7, 2:30 PM',
+        'Jan 8, 10:15 AM', 
+        'Jan 8, 3:45 PM',
+        'Jan 8, 4:30 PM',
+        'Jan 9, 9:00 AM'  // In case there are 5 approvers
+    ];
+    
+    // Shuffle approval times for random response order
+    const shuffledTimes = [...approvalTimes];
+    for (let i = shuffledTimes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledTimes[i], shuffledTimes[j]] = [shuffledTimes[j], shuffledTimes[i]];
+    }
+    
+    // Assign randomized times to approvers
+    const approverTimeMap = {};
+    approvers.forEach((approver, idx) => {
+        approverTimeMap[approver.id] = shuffledTimes[idx];
+    });
+    
+    // Find the last approval time (chronologically)
+    const sortedApprovalTimes = [...shuffledTimes].slice(0, approvers.length).sort((a, b) => a.localeCompare(b));
+    const lastApprovalTime = sortedApprovalTimes[sortedApprovalTimes.length - 1];
+    
+    // Calculate approval completion time (5 minutes after last approval)
+    const approvalCompleteTime = lastApprovalTime.replace(/(\d+):(\d+)/, (match, h, m) => {
+        const newMin = parseInt(m) + 5;
+        return newMin >= 60 ? `${parseInt(h) + 1}:${String(newMin - 60).padStart(2, '0')}` : `${h}:${String(newMin).padStart(2, '0')}`;
+    });
+    
+    // Calculate store time (10 minutes after last approval)
+    const storeTime = lastApprovalTime.replace(/(\d+):(\d+)/, (match, h, m) => {
+        const newMin = parseInt(m) + 10;
+        return newMin >= 60 ? `${parseInt(h) + 1}:${String(newMin - 60).padStart(2, '0')}` : `${h}:${String(newMin).padStart(2, '0')}`;
+    });
+    
     const timeline = {
         // Business Day 1: Tuesday, Jan 7 - Board Approval starts
         'approval-send': 'Jan 7, 9:15 AM',
-        'approval-johnson': 'Jan 7, 2:30 PM',
-        'approval-sullivan': 'Jan 8, 10:15 AM',
-        'approval-davidson': 'Jan 8, 3:45 PM',
-        'approval-williams': 'Jan 8, 4:30 PM',
-        'approval-store': 'Jan 8, 4:45 PM',
+        'approval': approvalCompleteTime, // Completed when all approvers respond
+        'approval-store': storeTime,
         
         // Business Day 3: Thursday, Jan 9 - Forms preparation and sending
         'forms-create': 'Jan 9, 10:00 AM',
         'forms-send': 'Jan 9, 10:30 AM',
         'forms-receive': 'Jan 10, 2:15 PM',
         'forms-validate': 'Jan 10, 2:30 PM',
-        'forms-store': 'Jan 10, 2:45 PM',
-        
-        // Business Day 4: Friday, Jan 10 - Regulatory filing
-        'filing-prepare': 'Jan 10, 3:00 PM',
-        'filing-submit': 'Jan 10, 4:00 PM',
-        'filing-confirm': 'Jan 13, 11:00 AM',
-        'filing-store': 'Jan 13, 11:15 AM',
+        'forms-store-consent': 'Jan 10, 2:45 PM',
+        'forms-store-regulatory': 'Jan 10, 3:00 PM',
         
         // Business Day 5: Monday, Jan 13 - Entity updates
         'entity-resign': 'Jan 13, 2:00 PM',
-        'entity-appoint': 'Jan 13, 2:15 PM'
+        'entity-appoint': 'Jan 13, 2:15 PM',
+        
+        // Add approver times
+        ...approverTimeMap
     };
     
     // Build updates dynamically based on actual process steps
@@ -2648,8 +2738,9 @@ function simulateLiveUpdates() {
             // Skip if already completed
             if (substep.status === 'completed') return;
             
-            // Add in_progress update
-            if (substep.status !== 'in_progress') {
+            // Special handling for approval substep with nested approvers
+            if (substep.approvers) {
+                // Mark approval as in_progress when first approver starts
                 updates.push({
                     stepId: step.id,
                     substepId: substep.id,
@@ -2657,18 +2748,67 @@ function simulateLiveUpdates() {
                     time: null,
                     delay: currentDelay
                 });
-                currentDelay = Math.floor(Math.random() * 2000) + 1500; // 1.5-3.5s
+                currentDelay = Math.floor(Math.random() * 2000) + 1500;
+                
+                // Create approver updates with their timestamps
+                const approverUpdates = substep.approvers.map(approver => ({
+                    stepId: step.id,
+                    substepId: substep.id,
+                    approverId: approver.id,
+                    status: 'completed',
+                    vote: 'Approved',
+                    time: timeline[approver.id] || 'Completed',
+                    timestamp: timeline[approver.id], // For sorting
+                    delay: currentDelay,
+                    isApprover: true
+                }));
+                
+                // Sort approver updates by timestamp so they come in chronologically
+                approverUpdates.sort((a, b) => {
+                    const timeA = a.timestamp || '';
+                    const timeB = b.timestamp || '';
+                    return timeA.localeCompare(timeB);
+                });
+                
+                // Add sorted approver updates
+                approverUpdates.forEach(update => {
+                    updates.push(update);
+                    currentDelay = Math.floor(Math.random() * 2000) + 2000;
+                });
+                
+                // Mark approval as completed when all approvers done
+                updates.push({
+                    stepId: step.id,
+                    substepId: substep.id,
+                    status: 'completed',
+                    time: timeline[substep.id] || 'Completed',
+                    delay: currentDelay
+                });
+                currentDelay = Math.floor(Math.random() * 2000) + 2000;
+            } else {
+                // Regular substep processing
+                // Add in_progress update
+                if (substep.status !== 'in_progress') {
+                    updates.push({
+                        stepId: step.id,
+                        substepId: substep.id,
+                        status: 'in_progress',
+                        time: null,
+                        delay: currentDelay
+                    });
+                    currentDelay = Math.floor(Math.random() * 2000) + 1500; // 1.5-3.5s
+                }
+                
+                // Add completed update with realistic timestamp
+                updates.push({
+                    stepId: step.id,
+                    substepId: substep.id,
+                    status: 'completed',
+                    time: timeline[substep.id] || 'Completed',
+                    delay: currentDelay
+                });
+                currentDelay = Math.floor(Math.random() * 2000) + 2000; // 2-4s
             }
-            
-            // Add completed update with realistic timestamp
-            updates.push({
-                stepId: step.id,
-                substepId: substep.id,
-                status: 'completed',
-                time: timeline[substep.id] || 'Completed',
-                delay: currentDelay
-            });
-            currentDelay = Math.floor(Math.random() * 2000) + 2000; // 2-4s
         });
     });
     
@@ -2691,12 +2831,20 @@ function simulateLiveUpdates() {
         if (step) {
             const substep = step.substeps.find(s => s.id === update.substepId);
             if (substep) {
-                substep.status = update.status;
-                substep.time = update.time;
-                
-                // For approver substeps, set vote to "Approved" when completed
-                if (substep.id.startsWith('approval-') && substep.id !== 'approval-create' && substep.id !== 'approval-send' && substep.id !== 'approval-store' && update.status === 'completed') {
-                    substep.vote = 'Approved';
+                // Handle approver update
+                if (update.isApprover && substep.approvers) {
+                    const approver = substep.approvers.find(a => a.id === update.approverId);
+                    if (approver) {
+                        approver.status = update.status;
+                        approver.time = update.time;
+                        approver.vote = update.vote;
+                    }
+                } else {
+                    // Regular substep update
+                    substep.status = update.status;
+                    if (update.time) {
+                        substep.time = update.time;
+                    }
                 }
                 
                 // Refresh the panel if it's open
@@ -2887,15 +3035,15 @@ function generateDocumentViewerPanel(docId, previousPanelType) {
                 : 'Regulatory filing for director change',
             type: 'Draft'
         },
-        'regulatory-filing': {
-            name: company && company.location === 'Singapore' ? 'Form 45 (Filed)' : 'Regulatory Filing (Filed)',
+        'regulatory-form-signed': {
+            name: company && company.location === 'Singapore' ? 'Form 45 (Signed)' : 'Regulatory Filing Form (Signed)',
             filename: company && company.location === 'Singapore' 
-                ? `Form_45_Filed_${companyShort}.pdf` 
-                : `Regulatory_Filing_${companyShort}.pdf`,
+                ? `Form_45_Signed_${companyShort}.pdf` 
+                : `Regulatory_Filing_Signed_${companyShort}.pdf`,
             description: company && company.location === 'Singapore'
-                ? 'Filed Form 45 with confirmation'
-                : 'Filed regulatory documents with confirmation',
-            type: 'Filed'
+                ? 'Signed Form 45 - Ready for manual filing'
+                : 'Signed regulatory form - Ready for manual filing',
+            type: 'Signed'
         }
     };
     
@@ -3001,9 +3149,9 @@ function downloadDocumentFromViewer(docId) {
         'regulatory-form': company && company.location === 'Singapore' 
             ? `Form_45_${companyShort}.pdf` 
             : `Regulatory_Filing_${companyShort}.pdf`,
-        'regulatory-filing': company && company.location === 'Singapore' 
-            ? `Form_45_Filed_${companyShort}.pdf` 
-            : `Regulatory_Filing_${companyShort}.pdf`
+        'regulatory-form-signed': company && company.location === 'Singapore' 
+            ? `Form_45_Signed_${companyShort}.pdf` 
+            : `Regulatory_Filing_Signed_${companyShort}.pdf`
     };
     
     if (currentChatId) {

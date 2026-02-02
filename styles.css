@@ -196,7 +196,6 @@ body {
     display: flex;
     flex-direction: column;
     min-width: 0;
-    padding-top: var(--space-16);
     padding-bottom: var(--space-16);
 }
 
@@ -213,6 +212,7 @@ body {
     align-self: flex-start;
     position: sticky;
     top: calc(56px + var(--space-6));
+    margin-top: 0;
 }
 
 /* Custom scrollbar for What's New sidebar */
