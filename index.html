@@ -7,128 +7,80 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Left Navigation Rail -->
-    <nav class="nav-rail">
-        <div class="nav-rail-logo">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                <rect width="32" height="32" rx="8" fill="var(--color-gray-800)"/>
-                <rect x="8" y="8" width="16" height="16" rx="2" fill="var(--color-white)"/>
-            </svg>
-        </div>
-        
-        <div class="nav-rail-items">
-            <button class="nav-rail-item active" id="navHome" title="Home">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navConsole" title="Console">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="4 17 10 11 4 5"></polyline>
-                    <line x1="12" y1="19" x2="20" y2="19"></line>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navDocs" title="Documents">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navReports" title="Reports">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <line x1="9" y1="9" x2="9" y2="15"></line>
-                    <line x1="15" y1="9" x2="15" y2="15"></line>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navTools" title="Tools">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-                    <path d="M2 17l10 5 10-5"></path>
-                    <path d="M2 12l10 5 10-5"></path>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navAnalytics" title="Analytics">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-            </button>
-            
-            <button class="nav-rail-item" id="navTeam" title="Team">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-            </button>
-        </div>
-    </nav>
-
     <!-- Top Header -->
     <div class="top-header" id="topHeader">
         <div class="top-header-left">
-            <div class="company-selector">
-                <div class="company-logo">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                        <rect width="32" height="32" rx="8" fill="var(--color-gray-800)"/>
-                        <path d="M16 8L22 20H10L16 8Z" fill="var(--color-white)"/>
-                        <rect x="14" y="22" width="4" height="2" fill="var(--color-white)"/>
-                    </svg>
-                </div>
-                <span class="company-name">Acme, Inc.</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="dropdown-icon">
-                    <polyline points="6 9 12 15 18 9"></polyline>
+            <button class="header-icon-btn hamburger-menu" title="Menu">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
+            </button>
+            <div class="diligent-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect width="24" height="24" rx="4" fill="#D32F2F"/>
+                    <path d="M12 6L16 14H8L12 6Z" fill="white"/>
+                </svg>
+                <span class="logo-text">Diligent</span>
             </div>
         </div>
         <div class="top-header-right">
-            <button class="header-icon-btn" title="Keyboard shortcuts">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
-                    <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"></path>
+            <button class="director-view-btn" title="Director View">
+                <span>Director View</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="external-icon">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
                 </svg>
             </button>
-            <button class="header-icon-btn" title="Notifications">
+            
+            <button class="header-icon-btn" title="Theme">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                <span class="notification-badge">10</span>
-            </button>
-            <button class="header-icon-btn" title="User profile">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M7.88 7.88L12 12M16.12 7.88L12 12M7.88 16.12L12 12M16.12 16.12L12 12M12 12L12 2"></path>
                 </svg>
             </button>
+            
+            <button class="header-icon-btn" title="Settings">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+                </svg>
+            </button>
+            
+            <button class="header-icon-btn" title="Apps">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </button>
+            
+            <div class="company-selector">
+                <div class="company-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect width="24" height="24" rx="12" fill="#3B82F6"/>
+                        <path d="M12 6L16 14H8L12 6Z" fill="white"/>
+                        <rect x="10" y="16" width="4" height="2" fill="white"/>
+                    </svg>
+                </div>
+                <span class="company-name">Acme, Inc.</span>
+                <button class="user-avatar" title="User profile">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
     
-    <!-- Hero View (initial state) -->
+    <!-- Command Center View -->
     <div class="container" id="heroView">
         <!-- Main Content Area -->
         <div class="hero-main">
-            <!-- Welcome Section -->
-            <header class="welcome-section">
-                <div class="welcome-avatar">
-                    <div class="avatar-circle">SH</div>
-                    <span class="avatar-status"></span>
-                </div>
-                <div class="welcome-text">
-                    <h1 class="welcome-title">Good morning, Sarah.</h1>
-                    <p class="welcome-subtitle">Where should we get started today?</p>
-                </div>
-            </header>
-
             <!-- Quick Action Buttons -->
             <!-- TEMPORARILY HIDDEN - MAY USE LATER
             <div class="quick-actions">
@@ -160,88 +112,12 @@
             </div>
         </div>
         -->
-
-            <!-- Info Cards Section -->
-            <div class="info-cards">
-                <!-- Chat Alerts Card -->
-                <div class="info-card">
-                    <div class="info-card-header">
-                        <h3 class="info-card-title">Attention Needed</h3>
-                    </div>
-                    <ul class="info-card-list">
-                        <li class="alert-item alert-success">
-                            <div class="alert-icon">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                </svg>
-                            </div>
-                            <div class="alert-content">
-                                <p class="alert-text">Board Appointment workflow completed successfully</p>
-                                <span class="alert-meta">Director Appointment • 2 hours ago</span>
-                            </div>
-                        </li>
-                        <li class="alert-item alert-warning">
-                            <div class="alert-icon">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                                </svg>
-                            </div>
-                            <div class="alert-content">
-                                <p class="alert-text">Email response delayed for Board Appointment workflow</p>
-                                <span class="alert-meta">Director Appointment • Action required</span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Recent Chats Card -->
-                <div class="info-card">
-                    <div class="info-card-header">
-                        <h3 class="info-card-title">Recent Chats</h3>
-                    </div>
-                    <ul class="info-card-list">
-                        <li class="recent-chat-item">
-                            <div class="recent-chat-content">
-                                <p class="recent-chat-title">Director Appointment</p>
-                                <span class="recent-chat-meta">2 hours ago</span>
-                            </div>
-                        </li>
-                        <li class="recent-chat-item">
-                            <div class="recent-chat-content">
-                                <p class="recent-chat-title">Board Resolution Review</p>
-                                <span class="recent-chat-meta">Yesterday</span>
-                            </div>
-                        </li>
-                        <li class="recent-chat-item">
-                            <div class="recent-chat-content">
-                                <p class="recent-chat-title">Compliance Report Q4 2024</p>
-                                <span class="recent-chat-meta">2 days ago</span>
-                            </div>
-                        </li>
-                        <li class="recent-chat-item">
-                            <div class="recent-chat-content">
-                                <p class="recent-chat-title">Entity Structure Analysis</p>
-                                <span class="recent-chat-meta">3 days ago</span>
-                            </div>
-                        </li>
-                        <li class="recent-chat-item">
-                            <div class="recent-chat-content">
-                                <p class="recent-chat-title">Risk Assessment Update</p>
-                                <span class="recent-chat-meta">1 week ago</span>
-                            </div>
-                        </li>
-                    </ul>
-                    <div class="info-card-footer">
-                        <a href="#" class="view-all-link" id="viewAllChatsLink">View all</a>
-                    </div>
-                </div>
-            </div>
-
         <!-- AI Prompt Section -->
         <div class="prompt-section">
+            <div class="prompt-header">
+                <h2 class="prompt-title">What do you need to do?</h2>
+                <p class="prompt-description">Type a request or view the Assist Tools available below</p>
+            </div>
             <textarea 
                 id="promptInput" 
                 class="prompt-input" 
@@ -271,9 +147,9 @@
             </div>
         </div>
 
-            <!-- What Can I Do Link -->
+            <!-- View Assist Tools Link -->
             <div class="what-can-i-do-link">
-                <a href="#" id="whatCanIDoBtn">What can I do?</a>
+                <a href="#" id="whatCanIDoBtn">View Assist Tools</a>
             </div>
 
             <!-- Assist Capabilities Container (hidden by default) -->
@@ -319,67 +195,113 @@
                 </div>
             </div>
 
+            <!-- Agent Activity Section -->
+            <div class="info-card attention-needed-card">
+                <div class="info-card-header">
+                    <h3 class="info-card-title">Agent Activity</h3>
+                </div>
+                <ul class="info-card-list">
+                    <!-- In Progress Items -->
+                    <li class="alert-item alert-in-progress">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">Wei "David" Chen appointed to VitaPlast Solutions</p>
+                            <span class="alert-meta">Board approved 4 of 6 • In progress</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                    
+                    <li class="alert-item alert-in-progress">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 6v6l4 2"></path>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">Lim Pei Shan appointed to Acme Circular Technologies</p>
+                            <span class="alert-meta">Awaiting signed regulatory forms • In progress</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                    
+                    <!-- Requiring Action -->
+                    <li class="alert-item alert-warning">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">James Sterling appointed to Acme Feedstock & Monomer</p>
+                            <span class="alert-meta">Regulatory form signature required • Action required</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                    
+                    <!-- Completed Items -->
+                    <li class="alert-item alert-success">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">Priya Nair appointed to Pacific Polymer Logistics</p>
+                            <span class="alert-meta">All documents filed, entity records updated • Completed</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                    
+                    <li class="alert-item alert-success">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">Elena Rossi appointed to DuraFlow Composites</p>
+                            <span class="alert-meta">Board approved, regulatory forms filed • Completed</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                    
+                    <li class="alert-item alert-success">
+                        <div class="alert-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="alert-content">
+                            <p class="alert-text">Kenji Tanaka appointed to Acme Advanced Materials</p>
+                            <span class="alert-meta">Successfully completed all steps • Completed</span>
+                        </div>
+                        <button class="alert-review-btn">Review</button>
+                    </li>
+                </ul>
+            </div>
+
             <!-- Response Area (hidden by default) -->
             <div class="response-area" id="responseArea" style="display: none;">
                 <div class="response-content" id="responseContent"></div>
             </div>
         </div>
 
-        <!-- What's New Sidebar -->
-        <aside class="whats-new-sidebar">
-            <div class="whats-new-header">
-                <span class="whats-new-label">WHAT'S NEW</span>
-               
-                <p class="whats-new-subtitle">Learn more about features and capabilities you already have today.</p>
-            </div>
-
-            <div class="whats-new-items">
-                <article class="whats-new-item">
-                    <h3 class="whats-new-item-title">Diligent Insights: Calm governance in steady-state</h3>
-                    <p class="whats-new-item-description">A short read on maintaining confidence between cycles.</p>
-                    <a href="#" class="whats-new-item-link">OPEN</a>
-                </article>
-
-                <article class="whats-new-item">
-                    <h3 class="whats-new-item-title">New AI capability: auto-summaries for quiet periods</h3>
-                    <p class="whats-new-item-description">Weekly summaries that highlight what stayed the same.</p>
-                    <a href="#" class="whats-new-item-link">OPEN</a>
-                </article>
-
-                <article class="whats-new-item">
-                    <h3 class="whats-new-item-title">Recently added: lightweight assurance notes</h3>
-                    <p class="whats-new-item-description">Capture brief, optional notes without creating new tasks.</p>
-                    <a href="#" class="whats-new-item-link">OPEN</a>
-                </article>
-            </div>
-        </aside>
+        <!-- What's New Sidebar - REMOVED for centered layout -->
     </div>
 
     <!-- Chat View (hidden initially) -->
     <div class="chat-view" id="chatView" style="display: none;">
-        <!-- Left Sidebar: Chat History -->
-        <aside class="chat-sidebar" id="chatSidebar">
-            <div class="sidebar-header">
-                <h3 class="sidebar-title">Conversations</h3>
-                <button class="new-chat-btn" id="newChatBtn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="chat-sort-control">
-                <label class="sort-label">Sort by:</label>
-                <select class="sort-select" id="chatSortSelect">
-                    <option value="recent_updates">Recent Updates</option>
-                    <option value="most_recent">Most Recent</option>
-                </select>
-            </div>
-            <div class="chat-history" id="chatHistory">
-                <!-- Chat history items will be inserted here -->
-            </div>
-        </aside>
-
         <!-- Main Panel: Current Conversation -->
         <main class="chat-main" id="chatMain">
             <div class="chat-header">
@@ -393,7 +315,7 @@
                 <!-- Messages will be inserted here -->
             </div>
 
-            <div class="chat-input-container">
+            <div class="chat-input-section">
                 <div class="chat-prompt-box">
                     <textarea 
                         id="chatInput" 
@@ -401,12 +323,27 @@
                         placeholder="Type your message..."
                         rows="1"
                     ></textarea>
-                    <button class="chat-send-btn" id="chatSendBtn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </button>
+                    <div class="chat-prompt-controls">
+                        <button class="chat-prompt-icon-btn" id="chatAttachBtn" title="Attach file">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                            </svg>
+                        </button>
+                        <button class="chat-prompt-icon-btn" id="chatVoiceBtn" title="Voice input">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="23"></line>
+                                <line x1="8" y1="23" x2="16" y2="23"></line>
+                            </svg>
+                        </button>
+                        <button class="chat-prompt-icon-btn chat-send-btn" id="chatSendBtn" title="Send">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>

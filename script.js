@@ -6,7 +6,7 @@ let currentView = 'hero'; // 'hero' or 'chat'
 let chats = []; // Array of all chat sessions
 let currentChatId = null;
 let messageCounter = 0;
-let chatSortMode = 'recent_updates'; // 'most_recent' or 'recent_updates'
+// let chatSortMode = 'recent_updates'; // Removed - sidebar no longer exists
 
 // Process tracking state
 let processRunning = false;
@@ -35,8 +35,9 @@ const responseContent = document.getElementById('responseContent');
 // const appDropdown = document.getElementById('appDropdown');
 
 // Navigation rail buttons
-const navHome = document.getElementById('navHome');
-const navConsole = document.getElementById('navConsole');
+// Navigation - Left rail removed
+// const navHome = document.getElementById('navHome');
+// const navConsole = document.getElementById('navConsole');
 
 // Top header
 const topHeader = document.getElementById('topHeader');
@@ -46,23 +47,23 @@ const whatCanIDoBtn = document.getElementById('whatCanIDoBtn');
 const assistCapabilities = document.getElementById('assistCapabilities');
 const closeCapabilitiesBtn = document.getElementById('closeCapabilitiesBtn');
 
-// View All Chats Link
-const viewAllChatsLink = document.getElementById('viewAllChatsLink');
+// View All Chats Link - REMOVED (Recent Chats card removed)
+// const viewAllChatsLink = document.getElementById('viewAllChatsLink');
 
 // ============================================
 // CHAT VIEW ELEMENTS
 // ============================================
 
 const chatView = document.getElementById('chatView');
-const chatSidebar = document.getElementById('chatSidebar');
-const chatHistory = document.getElementById('chatHistory');
+// const chatSidebar = document.getElementById('chatSidebar'); // Removed - sidebar no longer exists
+// const chatHistory = document.getElementById('chatHistory'); // Removed - sidebar no longer exists
 const chatMain = document.getElementById('chatMain');
 const chatThread = document.getElementById('chatThread');
 const chatInput = document.getElementById('chatInput');
 const chatSendBtn = document.getElementById('chatSendBtn');
 const chatTitle = document.getElementById('chatTitle');
 const backToHeroBtn = document.getElementById('backToHeroBtn');
-const newChatBtn = document.getElementById('newChatBtn');
+// const newChatBtn = document.getElementById('newChatBtn'); // Removed - sidebar no longer exists
 const rightPanel = document.getElementById('rightPanel');
 // rightPanelToggle removed - replaced by dynamic header actions
 const closeRightPanel = document.getElementById('closeRightPanel');
@@ -156,12 +157,15 @@ if (closeCapabilitiesBtn && assistCapabilities) {
 }
 
 // View All Chats link
+// View All Chats link removed with Recent Chats card
+/*
 if (viewAllChatsLink) {
     viewAllChatsLink.addEventListener('click', function(e) {
         e.preventDefault();
         transitionToChatView();
     });
 }
+*/
 
 // Alert items (Attention Needed)
 document.querySelectorAll('.alert-item').forEach(item => {
@@ -192,18 +196,19 @@ document.querySelectorAll('.capability-try-btn').forEach(btn => {
     });
 });
 
-// Navigation rail handlers
+// Navigation rail handlers - REMOVED (left nav no longer exists)
+/*
 if (navHome) {
     navHome.addEventListener('click', function() {
         transitionToHeroView();
-        updateNavRailActive('navHome');
+        // updateNavRailActive('navHome'); // Removed - no left nav
     });
 }
 
 if (navConsole) {
     navConsole.addEventListener('click', function() {
         transitionToChatView();
-        updateNavRailActive('navConsole');
+        // updateNavRailActive('navConsole'); // Removed - no left nav
     });
 }
 
@@ -218,6 +223,7 @@ function updateNavRailActive(activeId) {
         activeElement.classList.add('active');
     }
 }
+*/
 
 // Helper function to set prompt and send (transitions to chat view)
 function setPromptAndSend(message) {
@@ -243,16 +249,16 @@ function sendMessage() {
 // ============================================
 
 function transitionToChatView(initialMessage) {
-    // Hide hero view and header
+    // Hide hero view, keep header visible
     heroView.style.display = 'none';
-    topHeader.style.display = 'none';
+    // topHeader.style.display = 'flex'; // Keep header visible across both views
     
     // Show chat view
     chatView.style.display = 'grid';
     currentView = 'chat';
     
     // Update navigation rail
-    updateNavRailActive('navConsole');
+    // updateNavRailActive('navConsole'); // Removed - no left nav
     
     // If initial message provided, create new chat; otherwise just show chat history
     if (initialMessage) {
@@ -267,16 +273,16 @@ function transitionToChatView(initialMessage) {
 }
 
 function transitionToHeroView() {
-    // Show hero view and header
+    // Show hero view, keep header visible
     heroView.style.display = 'flex';
-    topHeader.style.display = 'flex';
+    // topHeader.style.display = 'flex'; // Header is always visible now
     
     // Hide chat view
     chatView.style.display = 'none';
     currentView = 'hero';
     
     // Update navigation rail
-    updateNavRailActive('navHome');
+    // updateNavRailActive('navHome'); // Removed - no left nav
     
     // Clear response area
     responseArea.style.display = 'none';
@@ -310,7 +316,7 @@ function createNewChat(initialMessage) {
         chats.unshift(chat);
         
         // Update UI
-        updateChatHistoryDisplay();
+        // updateChatHistoryDisplay(); // Removed - sidebar no longer exists
         updateChatTitle(chat.title);
         clearChatThread();
         
@@ -337,7 +343,7 @@ function createNewChat(initialMessage) {
     chats.unshift(chat);
     
     // Update UI
-    updateChatHistoryDisplay();
+    // updateChatHistoryDisplay(); // Removed - sidebar no longer exists
     updateChatTitle(chat.title);
     clearChatThread();
     
@@ -487,9 +493,9 @@ function initializeMockChats() {
     chats = [...mockChats];
     
     // Initial display
-    if (currentView === 'chat') {
-        updateChatHistoryDisplay();
-    }
+    // if (currentView === 'chat') {
+    //     updateChatHistoryDisplay(); // Removed - sidebar no longer exists
+    // }
 }
 
 function addMessageToChat(chatId, role, content) {
@@ -518,7 +524,7 @@ function addMessageToChat(chatId, role, content) {
         appendMessageToThread(message);
     }
     
-    updateChatHistoryDisplay();
+    // updateChatHistoryDisplay(); // Removed - sidebar no longer exists
 }
 
 function appendMessageToThread(message) {
@@ -566,9 +572,10 @@ function loadChat(chatId) {
         appendMessageToThread(message);
     });
     
-    updateChatHistoryDisplay();
+    // updateChatHistoryDisplay(); // Removed - sidebar no longer exists
 }
 
+/* Chat history sidebar removed - function no longer needed
 function updateChatHistoryDisplay() {
     chatHistory.innerHTML = '';
     
@@ -636,6 +643,7 @@ function updateChatHistoryDisplay() {
         chatHistory.appendChild(item);
     });
 }
+*/
 
 function updateChatTitle(title) {
     chatTitle.textContent = title;
@@ -702,14 +710,17 @@ if (chatSendBtn) {
 // PANEL CONTROLS
 // ============================================
 
-// New chat
+// New chat - Removed (sidebar no longer exists)
+/*
 if (newChatBtn && chatInput) {
     newChatBtn.addEventListener('click', () => {
         chatInput.focus();
     });
 }
+*/
 
-// Chat sort control
+// Chat sort control - Removed (sidebar no longer exists)
+/*
 const chatSortSelect = document.getElementById('chatSortSelect');
 if (chatSortSelect) {
     chatSortSelect.addEventListener('change', (e) => {
@@ -717,6 +728,7 @@ if (chatSortSelect) {
         updateChatHistoryDisplay();
     });
 }
+*/
 
 // Close right panel (toggle is now replaced by dynamic header actions)
 if (closeRightPanel && chatView) {
@@ -2882,7 +2894,7 @@ function completeWorkflow() {
     }
     
     // Update history display
-    updateChatHistoryDisplay();
+    // updateChatHistoryDisplay(); // Removed - sidebar no longer exists
     
     // Show completion panel
     if (chatView.classList.contains('show-right-panel')) {
