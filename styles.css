@@ -1562,12 +1562,14 @@ body {
 }
 
 .chat-thread {
+    flex: 1;
+    min-height: 0;
     padding: var(--space-6);
-    padding-bottom: var(--space-8);
+    padding-bottom: 200px;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    min-height: 50vh;
+    overflow-y: auto;
 }
 
 .message {
@@ -1624,9 +1626,15 @@ body {
 }
 
 .chat-input-section {
-    padding: var(--space-6);
+    position: absolute;  
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--space-4) var(--space-6);
     padding-top: 0;
-    padding-bottom: var(--space-16);
+    padding-bottom: var(--space-4);
+    background: var(--color-gray-50);
+    z-index: 10;
 }
 
 .chat-prompt-box {
