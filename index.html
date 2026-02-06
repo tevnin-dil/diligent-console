@@ -77,8 +77,39 @@
         </div>
     </div>
     
-    <!-- Command Center View -->
+    <!-- Hero View Container -->
     <div class="container" id="heroView">
+        <!-- Command Center (status widget) -->
+        <div class="audit-status-widget">
+            <h2 class="audit-status-heading">Your director appointments are on track.</h2>
+            <p class="audit-status-description">3 appointments in progress, 1 signature required. Review the Agent Activity below to complete pending steps or start a new appointment with Assist.</p>
+            <div class="audit-monitoring-agents">
+                <span class="audit-agents-label">ASSIST AGENTS</span>
+                <div class="audit-agent-tags">
+                    <div class="audit-agent-tag status-amber">
+                        <span class="audit-agent-status-dot" aria-hidden="true"></span>
+                        <div class="audit-agent-tag-content">
+                            <span class="audit-agent-name">Director Appointments</span>
+                            <span class="audit-agent-status">2 in progress • 1 action required</span>
+                        </div>
+                    </div>
+                    <div class="audit-agent-tag status-red">
+                        <span class="audit-agent-status-dot" aria-hidden="true"></span>
+                        <div class="audit-agent-tag-content">
+                            <span class="audit-agent-name">Regulatory Forms</span>
+                            <span class="audit-agent-status">1 signature required • 2 awaiting board approval</span>
+                        </div>
+                    </div>
+                    <div class="audit-agent-tag status-green">
+                        <span class="audit-agent-status-dot" aria-hidden="true"></span>
+                        <div class="audit-agent-tag-content">
+                            <span class="audit-agent-name">Entity Sync</span>
+                            <span class="audit-agent-status">Last sync 2 hours ago • 3 records updated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Main Content Area -->
         <div class="hero-main">
             <!-- Quick Action Buttons -->
@@ -115,7 +146,7 @@
         <!-- AI Prompt Section -->
         <div class="prompt-section">
             <div class="prompt-header">
-                <h2 class="prompt-title">What do you need to do?</h2>
+                <h2 class="prompt-title">Ask your AI assistant anything.</h2>
                 <p class="prompt-description">Type a request or view the Assist Tools available below</p>
             </div>
             <textarea 
